@@ -24,6 +24,7 @@ WORKDIR /app
 
 # Créer un utilisateur non-root pour des raisons de sécurité
 RUN addgroup -S spring && adduser -S spring -G spring
+RUN mkdir -p /logs && chown -R spring:spring /logs
 USER spring:spring
 
 # Copier le JAR depuis le stage de build
