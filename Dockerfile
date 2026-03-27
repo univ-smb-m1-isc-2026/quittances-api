@@ -22,8 +22,15 @@ FROM eclipse-temurin:21-jre-alpine
 
 WORKDIR /app
 
+# Créer le répertoire des logs et les répertoires nécessaires
+RUN mkdir -p /app/logs
+
 # Créer un utilisateur non-root pour des raisons de sécurité
 RUN addgroup -S spring && adduser -S spring -G spring
+
+# Donner les permissions appropriées à l'utilisateur spring
+RUN chown -R spring:spring /app/logs
+
 USER spring:spring
 
 # Copier le JAR depuis le stage de build
