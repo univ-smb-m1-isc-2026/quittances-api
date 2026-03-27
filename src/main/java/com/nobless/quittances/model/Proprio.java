@@ -27,13 +27,18 @@ public class Proprio {
     @Column(nullable = false, unique = true, length = 10)
     private String telephone;
 
+    @Column(nullable = false, unique = true, length = 60)
+    private String password;
+
     public Proprio() {
     }
 
-    public Proprio(String nom, String prenom, String email) {
+    public Proprio(String nom, String prenom, String email, String telephone, String password) {
         this.nom = nom;
         this.prenom = prenom;
         this.email = email;
+        this.telephone = telephone;
+        this.password = password;
     }
 
     public Long getId() {
@@ -74,5 +79,13 @@ public class Proprio {
 
     public void setTelephone(String telephone){
         this.telephone = telephone;
+    }
+
+    public String getPassword(){
+        return password;
+    }
+
+    public void setPassword(String password){
+        this.password = password;
     }
 }
