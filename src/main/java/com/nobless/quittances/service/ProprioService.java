@@ -21,4 +21,8 @@ public class ProprioService {
     public List<Proprio> list() {
         return proprioRepository.findAll();
     }
+
+    public void deleteById(Long id) {
+        proprioRepository.deleteById(id);
+    }
 }
