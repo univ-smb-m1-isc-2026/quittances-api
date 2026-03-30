@@ -6,24 +6,53 @@ Base URL locale :
 http://localhost:8080
 ```
 
-## Restriction d'acces API (frontend uniquement)
+## Restriction d'acces API (CORS + Origin)
 
-L'API est configuree pour n'accepter que les requetes provenant d'origines frontend autorisees.
+L'API peut etre protegee pour n'accepter que les appels venant du frontend.
+
+Regles appliquees :
 
 - CORS autorise uniquement les origines de `app.security.allowed-origins`.
-- Un filtre bloque les appels `/api/**` sans en-tete `Origin` valide.
-- Exception : `/api/health` reste accessible sans cette verification.
+- Le filtre `FrontendOriginFilter` peut exiger un en-tete `Origin` valide sur `/api/**`.
+- Exception : `/api/health` reste accessible (pas de blocage Origin).
 
-Configuration :
+Configuration disponible :
 
-- Fichier : `quittances-api/src/main/resources/application.yaml`
-- Cle : `app.security.allowed-origins`
+- `app.security.allowed-origins` : liste des origines frontend autorisees.
+- `app.security.enforce-origin-header` :
+	- `true` : bloque les appels API sans `Origin` valide.
+	- `false` : mode debug local, appels API acceptes sans `Origin`.
 
-Exemple Docker Compose :
+Priorite de configuration :
+
+- Les variables d'environnement Docker (`APP_SECURITY_*`) ecrasent les valeurs du `application.yaml`.
+
+Exemples Docker Compose :
 
 ```yaml
 environment:
 	- APP_SECURITY_ALLOWED_ORIGINS=http://localhost:5173,https://quittances.oups.net
+	- APP_SECURITY_ENFORCE_ORIGIN_HEADER=true
+```
+
+Modes d'utilisation :
+
+- Debug local sans frontend :
+	- `APP_SECURITY_ENFORCE_ORIGIN_HEADER=false`
+	- ou `app.security.enforce-origin-header: false`
+
+- Mode protege (frontend uniquement) :
+	- `APP_SECURITY_ENFORCE_ORIGIN_HEADER=true`
+
+Tests rapides :
+
+```bash
+# health (toujours accessible)
+curl -i http://localhost:8080/api/health
+
+# route API en mode protege (Origin requis)
+curl -i http://localhost:8080/api/proprios \
+	-H "Origin: http://localhost:5173"
 ```
 
 ## Routes disponibles
