@@ -1,3 +1,9 @@
 spring:
   application:
     name: quittances
+
+app:
+  security:
+    enforce-origin-header: false
+    allowed-origins:
+      - http://localhost:5173
