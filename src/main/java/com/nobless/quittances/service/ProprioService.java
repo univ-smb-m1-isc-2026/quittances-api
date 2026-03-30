@@ -14,8 +14,13 @@ public class ProprioService {
         this.proprioRepository = proprioRepository;
     }
 
+
     public Proprio create(Proprio p) {
         return proprioRepository.save(p);
+    }
+
+    public Proprio findByEmail(String email) {
+        return proprioRepository.findByEmail(email);
     }
 
     public List<Proprio> list() {
