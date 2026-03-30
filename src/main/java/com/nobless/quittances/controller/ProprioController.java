@@ -16,8 +16,6 @@ import org.springframework.web.bind.annotation.RestController;
 import com.nobless.quittances.controller.dto.LoginRequest;
 import com.nobless.quittances.controller.dto.JwtResponse;
 import com.nobless.quittances.security.JwtUtil;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 
 import java.util.List;
 
