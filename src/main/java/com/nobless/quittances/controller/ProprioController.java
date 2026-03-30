@@ -16,8 +16,6 @@ import org.springframework.web.bind.annotation.RestController;
 import com.nobless.quittances.controller.dto.LoginRequest;
 import com.nobless.quittances.controller.dto.JwtResponse;
 import com.nobless.quittances.security.JwtUtil;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 
 import java.util.List;
 
@@ -55,16 +53,15 @@ public class ProprioController {
 
     @PostMapping("/api/proprios/login")
     public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest) {
-        log.info("Tentative de connexion pour email: '{}', password reçu: '{}'", loginRequest.getEmail(), loginRequest.getPassword());
+        log.info("Tentative de connexion pour email: '{}'", loginRequest.getEmail());
         Proprio proprio = proprioService.findByEmail(loginRequest.getEmail());
         log.info("Résultat findByEmail('{}') = {}", loginRequest.getEmail(), proprio);
         if (proprio == null) {
             log.warn("Aucun proprio trouvé pour email: '{}'", loginRequest.getEmail());
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Identifiants invalides");
         }
-        log.info("Comparaison password: attendu='{}', reçu='{}'", proprio.getPassword(), loginRequest.getPassword());
-        if (!proprio.getPassword().equals(loginRequest.getPassword())) {
-            log.warn("Mot de passe incorrect pour email: '{}' (attendu: '{}', reçu: '{}')", loginRequest.getEmail(), proprio.getPassword(), loginRequest.getPassword());
+        if (!proprioService.passwordMatches(loginRequest.getPassword(), proprio.getPassword())) {
+            log.warn("Mot de passe incorrect pour email: '{}'", loginRequest.getEmail());
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Identifiants invalides");
         }
         String jwt = jwtUtil.generateToken(proprio);
