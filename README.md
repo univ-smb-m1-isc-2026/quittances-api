@@ -6,6 +6,26 @@ Base URL locale :
 http://localhost:8080
 ```
 
+## Restriction d'acces API (frontend uniquement)
+
+L'API est configuree pour n'accepter que les requetes provenant d'origines frontend autorisees.
+
+- CORS autorise uniquement les origines de `app.security.allowed-origins`.
+- Un filtre bloque les appels `/api/**` sans en-tete `Origin` valide.
+- Exception : `/api/health` reste accessible sans cette verification.
+
+Configuration :
+
+- Fichier : `quittances-api/src/main/resources/application.yaml`
+- Cle : `app.security.allowed-origins`
+
+Exemple Docker Compose :
+
+```yaml
+environment:
+	- APP_SECURITY_ALLOWED_ORIGINS=http://localhost:5173,https://quittances.oups.net
+```
+
 ## Routes disponibles
 
 ### Acces sante
