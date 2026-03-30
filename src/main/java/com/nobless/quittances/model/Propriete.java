@@ -25,7 +25,7 @@ public class Propriete {
     @Column(nullable = false)
     private Double surfaceM2;
 
-    @Column(nullable = false, length = 100)
+    @Column(nullable = false, length = 2)
     private String type;
 
     @Column(nullable = false)
@@ -34,13 +34,26 @@ public class Propriete {
     @Column(nullable = false)
     private Double charges;
 
-    @Column(name = "locataire_email", length = 150)
-    private String locataireEmail;
+    @Column(name = "id_proprio", nullable = false)
+    private Long idProprio;
 
     @ManyToOne
     @JoinColumn(
-        name = "locataire_email",
-        referencedColumnName = "email",
+        name = "id_proprio",
+        referencedColumnName = "id",
+        insertable = false,
+        updatable = false,
+        foreignKey = @ForeignKey(name = "fk_proprietes_proprio_id")
+    )
+    private Proprio proprio;
+
+    @Column(name = "id_locataire", nullable = false)
+    private Long idLocataire;
+
+    @ManyToOne
+    @JoinColumn(
+        name = "id_locataire",
+        referencedColumnName = "id",
         insertable = false,
         updatable = false,
         foreignKey = @ForeignKey(name = "fk_proprietes_locataire_email")
@@ -66,7 +79,8 @@ public class Propriete {
         String type,
         Double loyer,
         Double charges,
-        String locataireEmail,
+        Long idProprio,
+        Long idLocataire,
         Integer dureeBail,
         Integer periodicite,
         String infosComplementaires
@@ -76,7 +90,8 @@ public class Propriete {
         this.type = type;
         this.loyer = loyer;
         this.charges = charges;
-        this.locataireEmail = locataireEmail;
+        this.idProprio = idProprio;
+        this.idLocataire = idLocataire;
         this.dureeBail = dureeBail;
         this.periodicite = periodicite;
         this.infosComplementaires = infosComplementaires;
@@ -130,12 +145,28 @@ public class Propriete {
         this.charges = charges;
     }
 
-    public String getLocataireEmail() {
-        return locataireEmail;
+    public Long getIdProprio() {
+        return idProprio;
     }
 
-    public void setLocataireEmail(String locataireEmail) {
-        this.locataireEmail = locataireEmail;
+    public void setIdProprio(Long idProprios) {
+        this.idProprio = idProprios;
+    }
+
+    public Proprio getProprio() {
+        return proprio;
+    }
+
+    public void setProprio(Proprio proprio) {
+        this.proprio = proprio;
+    }
+
+    public Long getIdLocataire() {
+        return idLocataire;
+    }
+
+    public void setIdLocataire(Long idLocataire) {
+        this.idLocataire = idLocataire;
     }
 
     public Locataire getLocataire() {

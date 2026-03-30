@@ -32,6 +32,14 @@ public class ProprieteController {
         return proprietes;
     }
 
+    @GetMapping("/api/proprietes/{id_proprios}")
+    public List<Propriete> listProprietesByProprio(@PathVariable("id_proprios") Long idProprios) {
+        log.info("GET /api/proprietes/{} - listing proprietes by proprio", idProprios);
+        List<Propriete> proprietes = proprieteService.listByIdProprios(idProprios);
+        log.info("GET /api/proprietes/{} - {} proprietes returned", idProprios, proprietes.size());
+        return proprietes;
+    }
+
     @PostMapping("/api/proprietes")
     public Propriete createPropriete(@RequestBody Propriete propriete) {
         return proprieteService.create(propriete);

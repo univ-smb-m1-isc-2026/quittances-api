@@ -22,6 +22,10 @@ public class ProprieteService {
         return proprieteRepository.findAll();
     }
 
+    public List<Propriete> listByIdProprios(Long idProprios) {
+        return proprieteRepository.findByIdProprios(idProprios);
+    }
+
     public void deleteById(Long id) {
         proprieteRepository.deleteById(id);
     }

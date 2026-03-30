@@ -35,6 +35,7 @@ http://localhost:8080
 | Methode | Route                | Description             |
 |---------|----------------------|-------------------------|
 | GET     | [/api/proprietes](#route-get-api-proprietes)      | Lister les proprietes   |
+| GET     | [/api/proprietes/{id_proprios}](#route-get-api-proprietes-id-proprios) | Lister les proprietes d'un proprietaire |
 | POST    | [/api/proprietes](#route-post-api-proprietes)      | Creer une propriete     |
 | DELETE  | [/api/proprietes/{id}](#route-delete-api-proprietes-id) | Supprimer une propriete |
 
@@ -193,6 +194,16 @@ curl -i -X DELETE http://localhost:8080/api/locataires/1
 curl -i http://localhost:8080/api/proprietes
 ```
 
+<a id="route-get-api-proprietes-id-proprios"></a>
+### Lister les proprietes d'un proprietaire
+
+- Methode : GET
+- Route : /api/proprietes/{id_proprios}
+
+```bash
+curl -i http://localhost:8080/api/proprietes/1
+```
+
 <a id="route-post-api-proprietes"></a>
 ### Creer une propriete
 
@@ -209,6 +220,7 @@ Schema des entrees (`POST /api/proprietes`) - table `proprietes` :
 | type                | String    | Non      | Non    |
 | loyer               | Double    | Non      | Non    |
 | charges             | Double    | Non      | Non    |
+| idProprios          | Long      | Non      | Non    |
 | locataireEmail      | String    | Oui      | Non    |
 | dureeBail           | Integer   | Non      | Non    |
 | periodicite         | Integer   | Oui      | Non    |
@@ -216,6 +228,7 @@ Schema des entrees (`POST /api/proprietes`) - table `proprietes` :
 
 Notes :
 - Le champ `id` est genere automatiquement et ne doit pas etre fourni dans le payload.
+- `idProprios` est une cle etrangere vers `proprietaires.id`.
 - `locataireEmail` est une cle etrangere vers `locataires.email`.
 
 Payload attendu :
@@ -227,6 +240,7 @@ Payload attendu :
 	"type": "Appartement",
 	"loyer": 1250.0,
 	"charges": 120.0,
+	"idProprios": 1,
 	"locataireEmail": "alice.martin@example.com",
 	"dureeBail": 36,
 	"periodicite": 1,
@@ -245,6 +259,7 @@ curl -i -X POST http://localhost:8080/api/proprietes \
 		"type": "Appartement",
 		"loyer": 1250.0,
 		"charges": 120.0,
+		"idProprios": 1,
 		"locataireEmail": "alice.martin@example.com",
 		"dureeBail": 36,
 		"periodicite": 1,
