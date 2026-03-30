@@ -30,6 +30,14 @@ http://localhost:8080
 | POST    | [/api/locataires](#route-post-api-locataires)      | Creer un locataire      |
 | DELETE  | [/api/locataires/{id}](#route-delete-api-locataires-id) | Supprimer un locataire  |
 
+### Acces table `proprietes`
+
+| Methode | Route                | Description             |
+|---------|----------------------|-------------------------|
+| GET     | [/api/proprietes](#route-get-api-proprietes)      | Lister les proprietes   |
+| POST    | [/api/proprietes](#route-post-api-proprietes)      | Creer une propriete     |
+| DELETE  | [/api/proprietes/{id}](#route-delete-api-proprietes-id) | Supprimer une propriete |
+
 <a id="route-get-api-health"></a>
 ## Sante de l'API
 
@@ -171,6 +179,87 @@ curl -i -X POST http://localhost:8080/api/locataires \
 
 ```bash
 curl -i -X DELETE http://localhost:8080/api/locataires/1
+```
+
+## Proprietes
+
+<a id="route-get-api-proprietes"></a>
+### Lister les proprietes
+
+- Methode : GET
+- Route : /api/proprietes
+
+```bash
+curl -i http://localhost:8080/api/proprietes
+```
+
+<a id="route-post-api-proprietes"></a>
+### Creer une propriete
+
+- Methode : POST
+- Route : /api/proprietes
+- Content-Type : application/json
+
+Schema des entrees (`POST /api/proprietes`) - table `proprietes` :
+
+| Nom                 | Type Java | Nullable | Unique |
+|---------------------|-----------|----------|--------|
+| adresse             | String    | Non      | Oui    |
+| surfaceM2           | Double    | Non      | Non    |
+| type                | String    | Non      | Non    |
+| loyer               | Double    | Non      | Non    |
+| charges             | Double    | Non      | Non    |
+| locataireEmail      | String    | Oui      | Non    |
+| dureeBail           | Integer   | Non      | Non    |
+| periodicite         | Integer   | Oui      | Non    |
+| infosComplementaires| String(TEXT) | Oui   | Non    |
+
+Notes :
+- Le champ `id` est genere automatiquement et ne doit pas etre fourni dans le payload.
+- `locataireEmail` est une cle etrangere vers `locataires.email`.
+
+Payload attendu :
+
+```json
+{
+	"adresse": "12 rue Victor Hugo, Paris",
+	"surfaceM2": 54.5,
+	"type": "Appartement",
+	"loyer": 1250.0,
+	"charges": 120.0,
+	"locataireEmail": "alice.martin@example.com",
+	"dureeBail": 36,
+	"periodicite": 1,
+	"infosComplementaires": "Appartement renove, 3eme etage, proche metro."
+}
+```
+
+Exemple curl :
+
+```bash
+curl -i -X POST http://localhost:8080/api/proprietes \
+	-H "Content-Type: application/json" \
+	-d '{
+		"adresse": "12 rue Victor Hugo, Paris",
+		"surfaceM2": 54.5,
+		"type": "Appartement",
+		"loyer": 1250.0,
+		"charges": 120.0,
+		"locataireEmail": "alice.martin@example.com",
+		"dureeBail": 36,
+		"periodicite": 1,
+		"infosComplementaires": "Appartement renove, 3eme etage, proche metro."
+	}'
+```
+
+<a id="route-delete-api-proprietes-id"></a>
+### Supprimer une propriete
+
+- Methode : DELETE
+- Route : /api/proprietes/{id}
+
+```bash
+curl -i -X DELETE http://localhost:8080/api/proprietes/1
 ```
 
 ## Notes
