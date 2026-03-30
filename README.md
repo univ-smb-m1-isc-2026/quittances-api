@@ -1,21 +1,5 @@
 # Quittances API
 
-API backend Spring Boot pour la gestion des proprietaires et locataires.
-
-## Demarrage
-
-### Option 1 : avec Docker Compose (depuis la racine du projet)
-
-```bash
-docker compose up -d --build
-```
-
-### Option 2 : en local (depuis quittances-api)
-
-```bash
-./mvnw spring-boot:run
-```
-
 Base URL locale :
 
 ```text
@@ -24,7 +8,30 @@ http://localhost:8080
 
 ## Routes disponibles
 
-### Sante de l'API
+### Acces sante
+
+| Methode | Route       | Description    |
+|---------|-------------|----------------|
+| GET     | [/api/health](#route-get-api-health) | Sante de l'API |
+
+### Acces table `proprietaires`
+
+| Methode | Route              | Description               |
+|---------|--------------------|---------------------------|
+| GET     | [/api/proprios](#route-get-api-proprios)      | Lister les proprietaires  |
+| POST    | [/api/proprios](#route-post-api-proprios)      | Creer un proprietaire     |
+| DELETE  | [/api/proprios/{id}](#route-delete-api-proprios-id) | Supprimer un proprietaire |
+
+### Acces table `locataires`
+
+| Methode | Route                | Description             |
+|---------|----------------------|-------------------------|
+| GET     | [/api/locataires](#route-get-api-locataires)      | Lister les locataires   |
+| POST    | [/api/locataires](#route-post-api-locataires)      | Creer un locataire      |
+| DELETE  | [/api/locataires/{id}](#route-delete-api-locataires-id) | Supprimer un locataire  |
+
+<a id="route-get-api-health"></a>
+## Sante de l'API
 
 - Methode : GET
 - Route : /api/health
@@ -35,9 +42,10 @@ Exemple :
 curl -i http://localhost:8080/api/health
 ```
 
-### Proprietaires
+## Proprietaires
 
-#### Lister les proprietaires
+<a id="route-get-api-proprios"></a>
+### Lister les proprietaires
 
 - Methode : GET
 - Route : /api/proprios
@@ -46,11 +54,24 @@ curl -i http://localhost:8080/api/health
 curl -i http://localhost:8080/api/proprios
 ```
 
-#### Creer un proprietaire
+<a id="route-post-api-proprios"></a>
+### Creer un proprietaire
 
 - Methode : POST
 - Route : /api/proprios
 - Content-Type : application/json
+
+Schema des entrees (`POST /api/proprios`) - table `proprietaires` :
+
+| Nom       | Type Java | Nullable | Unique |
+|-----------|-----------|----------|--------|
+| nom       | String    | Non      | Non    |
+| prenom    | String    | Non      | Non    |
+| email     | String    | Non      | Oui    |
+| telephone | String    | Non      | Oui    |
+| password  | String    | Non      | Oui    |
+
+Note : le champ `id` est genere automatiquement et ne doit pas etre fourni dans le payload.
 
 Payload attendu :
 
@@ -78,7 +99,8 @@ curl -i -X POST http://localhost:8080/api/proprios \
 	}'
 ```
 
-#### Supprimer un proprietaire
+<a id="route-delete-api-proprios-id"></a>
+### Supprimer un proprietaire
 
 - Methode : DELETE
 - Route : /api/proprios/{id}
@@ -87,9 +109,10 @@ curl -i -X POST http://localhost:8080/api/proprios \
 curl -i -X DELETE http://localhost:8080/api/proprios/1
 ```
 
-### Locataires
+## Locataires
 
-#### Lister les locataires
+<a id="route-get-api-locataires"></a>
+### Lister les locataires
 
 - Methode : GET
 - Route : /api/locataires
@@ -98,11 +121,23 @@ curl -i -X DELETE http://localhost:8080/api/proprios/1
 curl -i http://localhost:8080/api/locataires
 ```
 
-#### Creer un locataire
+<a id="route-post-api-locataires"></a>
+### Creer un locataire
 
 - Methode : POST
 - Route : /api/locataires
 - Content-Type : application/json
+
+Schema des entrees (`POST /api/locataires`) - table `locataires` :
+
+| Nom       | Type Java | Nullable | Unique |
+|-----------|-----------|----------|--------|
+| nom       | String    | Non      | Non    |
+| prenom    | String    | Non      | Non    |
+| email     | String    | Non      | Oui    |
+| telephone | String    | Non      | Oui    |
+
+Note : le champ `id` est genere automatiquement et ne doit pas etre fourni dans le payload.
 
 Payload attendu :
 
@@ -128,7 +163,8 @@ curl -i -X POST http://localhost:8080/api/locataires \
 	}'
 ```
 
-#### Supprimer un locataire
+<a id="route-delete-api-locataires-id"></a>
+### Supprimer un locataire
 
 - Methode : DELETE
 - Route : /api/locataires/{id}
