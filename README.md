@@ -20,6 +20,7 @@ http://localhost:8080
 |---------|--------------------|---------------------------|
 | GET     | [/api/proprios](#route-get-api-proprios)      | Lister les proprietaires  |
 | POST    | [/api/proprios](#route-post-api-proprios)      | Creer un proprietaire     |
+| POST    | [/api/proprios/login](#route-post-api-proprios-login) | Connexion proprietaire |
 | DELETE  | [/api/proprios/{id}](#route-delete-api-proprios-id) | Supprimer un proprietaire |
 
 ### Acces table `locataires`
@@ -116,6 +117,48 @@ curl -i -X POST http://localhost:8080/api/proprios \
 
 ```bash
 curl -i -X DELETE http://localhost:8080/api/proprios/1
+```
+
+<a id="route-post-api-proprios-login"></a>
+### Connexion proprietaire
+
+- Methode : POST
+- Route : /api/proprios/login
+- Content-Type : application/json
+
+Schema des entrees (`POST /api/proprios/login`) :
+
+| Nom      | Type Java | Nullable |
+|----------|-----------|----------|
+| email    | String    | Non      |
+| password | String    | Non      |
+
+Payload attendu :
+
+```json
+{
+	"email": "jean.dupont@example.com",
+	"password": "secret123"
+}
+```
+
+Reponse en cas de succes :
+
+```json
+{
+	"token": "<jwt>"
+}
+```
+
+Exemple curl :
+
+```bash
+curl -i -X POST http://localhost:8080/api/proprios/login \
+	-H "Content-Type: application/json" \
+	-d '{
+		"email": "jean.dupont@example.com",
+		"password": "secret123"
+	}'
 ```
 
 ## Locataires
@@ -220,16 +263,16 @@ Schema des entrees (`POST /api/proprietes`) - table `proprietes` :
 | type                | String    | Non      | Non    |
 | loyer               | Double    | Non      | Non    |
 | charges             | Double    | Non      | Non    |
-| idProprios          | Long      | Non      | Non    |
-| locataireEmail      | String    | Oui      | Non    |
+| idProprio           | Long      | Non      | Non    |
+| idLocataire         | Long      | Non      | Non    |
 | dureeBail           | Integer   | Non      | Non    |
 | periodicite         | Integer   | Oui      | Non    |
 | infosComplementaires| String(TEXT) | Oui   | Non    |
 
 Notes :
 - Le champ `id` est genere automatiquement et ne doit pas etre fourni dans le payload.
-- `idProprios` est une cle etrangere vers `proprietaires.id`.
-- `locataireEmail` est une cle etrangere vers `locataires.email`.
+- `idProprio` est une cle etrangere vers `proprietaires.id`.
+- `idLocataire` est une cle etrangere vers `locataires.id`.
 
 Payload attendu :
 
@@ -240,8 +283,8 @@ Payload attendu :
 	"type": "Appartement",
 	"loyer": 1250.0,
 	"charges": 120.0,
-	"idProprios": 1,
-	"locataireEmail": "alice.martin@example.com",
+	"idProprio": 1,
+	"idLocataire": 1,
 	"dureeBail": 36,
 	"periodicite": 1,
 	"infosComplementaires": "Appartement renove, 3eme etage, proche metro."
@@ -259,8 +302,8 @@ curl -i -X POST http://localhost:8080/api/proprietes \
 		"type": "Appartement",
 		"loyer": 1250.0,
 		"charges": 120.0,
-		"idProprios": 1,
-		"locataireEmail": "alice.martin@example.com",
+		"idProprio": 1,
+		"idLocataire": 1,
 		"dureeBail": 36,
 		"periodicite": 1,
 		"infosComplementaires": "Appartement renove, 3eme etage, proche metro."
