@@ -8,8 +8,8 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 
 @Entity
-@Table(name = "proprietaires")
-public class Proprio {
+@Table(name = "locataires")
+public class Locataire {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -27,18 +27,14 @@ public class Proprio {
     @Column(nullable = false, unique = true, length = 10)
     private String telephone;
 
-    @Column(nullable = false, unique = true, length = 60)
-    private String password;
-
-    public Proprio() {
+    public Locataire() {
     }
 
-    public Proprio(String nom, String prenom, String email, String telephone, String password) {
+    public Locataire(String nom, String prenom, String email, String telephone, String password) {
         this.nom = nom;
         this.prenom = prenom;
         this.email = email;
         this.telephone = telephone;
-        this.password = password;
     }
 
     public Long getId() {
@@ -79,13 +75,5 @@ public class Proprio {
 
     public void setTelephone(String telephone){
         this.telephone = telephone;
-    }
-
-    public String getPassword(){
-        return password;
-    }
-
-    public void setPassword(String password){
-        this.password = password;
     }
 }
