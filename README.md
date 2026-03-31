@@ -307,7 +307,9 @@ Schema des entrees (`POST /api/proprietes`) - table `proprietes` :
 
 | Nom                 | Type Java | Nullable | Unique |
 |---------------------|-----------|----------|--------|
-| adresse             | String    | Non      | Oui    |
+| adresse             | String    | Non      | Non    |
+| ville               | String    | Non      | Non    |
+| pays                | String    | Non      | Non    |
 | surfaceM2           | Double    | Non      | Non    |
 | type                | String    | Non      | Non    |
 | loyer               | Double    | Non      | Non    |
@@ -317,6 +319,7 @@ Schema des entrees (`POST /api/proprietes`) - table `proprietes` :
 | dureeBail           | Integer   | Non      | Non    |
 | periodicite         | Integer   | Oui      | Non    |
 | infosComplementaires| String(TEXT) | Oui   | Non    |
+| image               | String    | Oui      | Non    |
 
 Notes :
 - Le champ `id` est genere automatiquement et ne doit pas etre fourni dans le payload.
@@ -328,6 +331,8 @@ Payload attendu :
 ```json
 {
 	"adresse": "12 rue Victor Hugo, Paris",
+	"ville": "Paris",
+	"pays": "France",
 	"surfaceM2": 54.5,
 	"type": "Appartement",
 	"loyer": 1250.0,
@@ -336,7 +341,8 @@ Payload attendu :
 	"idLocataire": 1,
 	"dureeBail": 36,
 	"periodicite": 1,
-	"infosComplementaires": "Appartement renove, 3eme etage, proche metro."
+	"infosComplementaires": "Appartement renove, 3eme etage, proche metro.",
+	"image": "https://example.com/images/propriete-1.jpg"
 }
 ```
 
@@ -346,16 +352,19 @@ Exemple curl :
 curl -i -X POST http://localhost:8080/api/proprietes \
 	-H "Content-Type: application/json" \
 	-d '{
-		"adresse": "12 rue Victor Hugo, Paris",
+		"adresse": "12 rue Victor Hugo",
+		"ville": "Paris",
+		"pays": "France",
 		"surfaceM2": 54.5,
-		"type": "Appartement",
+		"type": "T2",
 		"loyer": 1250.0,
 		"charges": 120.0,
 		"idProprio": 1,
 		"idLocataire": 1,
 		"dureeBail": 36,
 		"periodicite": 1,
-		"infosComplementaires": "Appartement renove, 3eme etage, proche metro."
+		"infosComplementaires": "Appartement renove, 3eme etage, proche metro.",
+		"image": "https://example.com/images/propriete-1.jpg"
 	}'
 ```
 

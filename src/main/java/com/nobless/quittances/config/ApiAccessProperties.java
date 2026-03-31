@@ -11,7 +11,7 @@ import java.util.List;
 public class ApiAccessProperties {
 
     private List<String> allowedOrigins = new ArrayList<>(List.of("http://localhost:5173"));
-    private boolean enforceOriginHeader = true;
+    private boolean enforceOriginHeader = false;
 
     public List<String> getAllowedOrigins() {
         return allowedOrigins;
