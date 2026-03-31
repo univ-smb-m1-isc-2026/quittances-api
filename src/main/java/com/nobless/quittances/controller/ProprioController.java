@@ -22,6 +22,8 @@ import java.util.List;
 @RestController
 public class ProprioController {
 
+    private static final Logger log = LoggerFactory.getLogger(ProprioController.class);
+
     private final ProprioService proprioService;
 
     private final JwtUtil jwtUtil;
