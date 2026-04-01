@@ -7,3 +7,4 @@ app:
     enforce-origin-header: false
     allowed-origins:
       - http://localhost:5173
+      - https://localhost:5173
