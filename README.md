@@ -325,6 +325,16 @@ Notes :
 - Le champ `id` est genere automatiquement et ne doit pas etre fourni dans le payload.
 - `idProprio` est une cle etrangere vers `proprietaires.id`.
 - `idLocataire` est une cle etrangere vers `locataires.id`.
+- Le champ `type` est normalise en majuscules et doit etre une des valeurs autorisees :
+	- `STUDIO`
+	- `T1`, `T2`, `T3`, `T4`, `T5`
+	- `DUPLEX`, `TRIPLEX`, `SOUPLEX`
+	- `LOFT`
+
+Erreurs de validation possibles (HTTP 400) :
+- `type invalide: ...`
+- `idProprio invalide: proprietaire introuvable`
+- `idLocataire invalide: locataire introuvable`
 
 Payload attendu :
 
@@ -334,7 +344,7 @@ Payload attendu :
 	"ville": "Paris",
 	"pays": "France",
 	"surfaceM2": 54.5,
-	"type": "Appartement",
+	"type": "T2",
 	"loyer": 1250.0,
 	"charges": 120.0,
 	"idProprio": 1,
@@ -356,7 +366,7 @@ curl -i -X POST http://localhost:8080/api/proprietes \
 		"ville": "Paris",
 		"pays": "France",
 		"surfaceM2": 54.5,
-		"type": "T2",
+		"type": "DUPLEX",
 		"loyer": 1250.0,
 		"charges": 120.0,
 		"idProprio": 1,
