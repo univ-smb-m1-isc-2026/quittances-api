@@ -30,7 +30,7 @@ public class Propriete {
     @Column(nullable = false)
     private Double surfaceM2;
 
-    @Column(nullable = false, length = 2)
+    @Column(nullable = false, length = 20)
     private String type;
 
     @Column(nullable = false)
