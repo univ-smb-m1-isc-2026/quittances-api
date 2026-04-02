@@ -1,9 +1,12 @@
 package com.nobless.quittances.controller;
 
+import com.nobless.quittances.controller.dto.ApiResponse;
 import com.nobless.quittances.model.Propriete;
 import com.nobless.quittances.service.ProprieteService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -25,28 +28,37 @@ public class ProprieteController {
     }
 
     @GetMapping("/api/proprietes")
-    public List<Propriete> listProprietes() {
+    public ApiResponse<List<Propriete>> listProprietes() {
         log.info("GET /api/proprietes - listing proprietes");
         List<Propriete> proprietes = proprieteService.list();
         log.info("GET /api/proprietes - {} proprietes returned", proprietes.size());
-        return proprietes;
+        if (proprietes.isEmpty()) {
+            return ApiResponse.info(proprietes, "Aucune propriete en bdd");
+        }
+        return ApiResponse.success(proprietes);
     }
 
     @GetMapping("/api/proprietes/{id_proprios}")
-    public List<Propriete> listProprietesByProprio(@PathVariable("id_proprios") Long idProprios) {
+    public ApiResponse<List<Propriete>> listProprietesByProprio(@PathVariable("id_proprios") Long idProprios) {
         log.info("GET /api/proprietes/{} - listing proprietes by proprio", idProprios);
         List<Propriete> proprietes = proprieteService.listByIdProprio(idProprios);
         log.info("GET /api/proprietes/{} - {} proprietes returned", idProprios, proprietes.size());
-        return proprietes;
+        if (proprietes.isEmpty()) {
+            return ApiResponse.info(proprietes, "Aucune propriete en bdd");
+        }
+        return ApiResponse.success(proprietes);
     }
 
     @PostMapping("/api/proprietes")
-    public Propriete createPropriete(@RequestBody Propriete propriete) {
-        return proprieteService.create(propriete);
+    public ResponseEntity<ApiResponse<Propriete>> createPropriete(@RequestBody Propriete propriete) {
+        Propriete createdPropriete = proprieteService.create(propriete);
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(ApiResponse.success(createdPropriete, "Propriete creee"));
     }
 
     @DeleteMapping("/api/proprietes/{id}")
-    public void deletePropriete(@PathVariable Long id) {
+    public ApiResponse<Void> deletePropriete(@PathVariable Long id) {
         proprieteService.deleteById(id);
+        return ApiResponse.success(null, "Propriete supprimee");
     }
 }
