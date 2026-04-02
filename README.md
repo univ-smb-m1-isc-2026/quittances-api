@@ -433,10 +433,7 @@ Schema des entrees (`POST /api/quittances`) - table `quittances` :
 | idProprio       | Long      | Non      |
 | lessor          | Object    | Oui      |
 | tenant          | Object    | Oui      |
-| propertyAddress | String    | Oui      |
-| propertyCity    | String    | Oui      |
-| rent            | Double    | Oui      |
-| charges         | Double    | Oui      |
+| propriete       | Object    | Oui      |
 | period          | String    | Oui      |
 | paymentDate     | String    | Oui      |
 | signatureCity   | String    | Oui      |
@@ -444,8 +441,9 @@ Schema des entrees (`POST /api/quittances`) - table `quittances` :
 
 Notes :
 - Le champ `id` est genere automatiquement.
-- L'objet `lessor` correspond aux champs : `name`, `address`, `city`, `phone`, `email`.
-- L'objet `tenant` correspond aux champs : `name`, `address`, `city`, `phone`, `email`.
+- L'objet `lessor` requiert au minimum son `id` (ex: `{"id": 1}`).
+- L'objet `tenant` requiert au minimum son `id` (ex: `{"id": 1}`).
+- L'objet `propriete` requiert au minimum son `id` (ex: `{"id": 1}`).
 
 Payload attendu :
 
@@ -453,23 +451,14 @@ Payload attendu :
 {
 	"idProprio": 1,
 	"lessor": {
-		"name": "Jean Dupont",
-		"address": "12 rue de la Paix",
-		"city": "75001 Paris",
-		"phone": "06 00 00 00 00",
-		"email": "bailleur@exemple.fr"
+		"id": 1
 	},
 	"tenant": {
-		"name": "Alice Martin",
-		"address": "5 avenue des Lilas",
-		"city": "69001 Lyon",
-		"phone": "06 11 11 11 11",
-		"email": "locataire@exemple.fr"
+		"id": 1
 	},
-	"propertyAddress": "8 impasse des Roses",
-	"propertyCity": "13001 Marseille",
-	"rent": 800.0,
-	"charges": 50.0,
+	"propriete": {
+		"id": 1
+	},
 	"period": "février 2026",
 	"paymentDate": "01/02/2026",
 	"signatureCity": "Paris",
@@ -485,23 +474,14 @@ curl -i -X POST http://localhost:8080/api/quittances \
 	-d '{
 		"idProprio": 1,
 		"lessor": {
-			"name": "Jean Dupont",
-			"address": "12 rue de la Paix",
-			"city": "75001 Paris",
-			"phone": "06 00 00 00 00",
-			"email": "bailleur@exemple.fr"
+			"id": 1
 		},
 		"tenant": {
-			"name": "Alice Martin",
-			"address": "5 avenue des Lilas",
-			"city": "69001 Lyon",
-			"phone": "06 11 11 11 11",
-			"email": "locataire@exemple.fr"
+			"id": 1
 		},
-		"propertyAddress": "8 impasse des Roses",
-		"propertyCity": "13001 Marseille",
-		"rent": 800.0,
-		"charges": 50.0,
+		"propriete": {
+			"id": 1
+		},
 		"period": "février 2026",
 		"paymentDate": "01/02/2026",
 		"signatureCity": "Paris",

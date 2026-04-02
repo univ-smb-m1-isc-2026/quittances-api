@@ -1,12 +1,13 @@
 package com.nobless.quittances.model;
 
 import jakarta.persistence.Column;
-import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.Lob;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
 @Entity
@@ -20,20 +21,18 @@ public class Quittance {
     @Column(name = "id_proprio", nullable = false)
     private Long idProprio;
 
-    @Embedded
-    private LessorDetails lessor;
+    @ManyToOne
+    @JoinColumn(name = "lessor_id")
+    private Proprio lessor;
 
-    @Embedded
-    private TenantDetails tenant;
+    @ManyToOne
+    @JoinColumn(name = "tenant_id")
+    private Locataire tenant;
 
-    @Column(name = "property_address")
-    private String propertyAddress;
+    @ManyToOne
+    @JoinColumn(name = "propriete_id")
+    private Propriete propriete;
 
-    @Column(name = "property_city")
-    private String propertyCity;
-
-    private Double rent;
-    private Double charges;
     private String period;
 
     @Column(name = "payment_date")
@@ -64,52 +63,28 @@ public class Quittance {
         this.idProprio = idProprio;
     }
 
-    public LessorDetails getLessor() {
+    public Proprio getLessor() {
         return lessor;
     }
 
-    public void setLessor(LessorDetails lessor) {
+    public void setLessor(Proprio lessor) {
         this.lessor = lessor;
     }
 
-    public TenantDetails getTenant() {
+    public Locataire getTenant() {
         return tenant;
     }
 
-    public void setTenant(TenantDetails tenant) {
+    public void setTenant(Locataire tenant) {
         this.tenant = tenant;
     }
 
-    public String getPropertyAddress() {
-        return propertyAddress;
+    public Propriete getPropriete() {
+        return propriete;
     }
 
-    public void setPropertyAddress(String propertyAddress) {
-        this.propertyAddress = propertyAddress;
-    }
-
-    public String getPropertyCity() {
-        return propertyCity;
-    }
-
-    public void setPropertyCity(String propertyCity) {
-        this.propertyCity = propertyCity;
-    }
-
-    public Double getRent() {
-        return rent;
-    }
-
-    public void setRent(Double rent) {
-        this.rent = rent;
-    }
-
-    public Double getCharges() {
-        return charges;
-    }
-
-    public void setCharges(Double charges) {
-        this.charges = charges;
+    public void setPropriete(Propriete propriete) {
+        this.propriete = propriete;
     }
 
     public String getPeriod() {
