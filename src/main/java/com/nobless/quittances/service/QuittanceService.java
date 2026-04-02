@@ -3,11 +3,13 @@ package com.nobless.quittances.service;
 import com.nobless.quittances.model.Quittance;
 import com.nobless.quittances.repository.QuittanceRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
 
 @Service
+@Transactional
 public class QuittanceService {
 
     private final QuittanceRepository quittanceRepository;
