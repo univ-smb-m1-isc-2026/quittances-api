@@ -14,11 +14,13 @@ import org.springframework.test.web.servlet.MockMvc;
 import java.util.Collections;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -66,6 +68,21 @@ class QuittanceControllerTest {
                         .content("{\"period\":\"mars 2026\"}"))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.state").value("[SUCCESS] Quittance creee"));
+    }
+
+    @Test
+    void updateQuittance_returnsSuccess() throws Exception {
+        Quittance quittance = new Quittance();
+        quittance.setId(42L);
+        quittance.setPeriod("avril 2026");
+
+        when(quittanceService.updateById(eq(42L), any(Quittance.class))).thenReturn(quittance);
+
+        mockMvc.perform(put("/api/quittances/42")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"period\":\"avril 2026\"}"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.state").value("[SUCCESS] Quittance modifiee"));
     }
 
     @Test

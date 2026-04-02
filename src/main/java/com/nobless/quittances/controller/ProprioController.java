@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -48,6 +49,12 @@ public class ProprioController {
         Proprio createdProprio = proprioService.create(proprio);
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(ApiResponse.success(createdProprio, "Proprio cree"));
+    }
+
+    @PutMapping("/api/proprios/{id}")
+    public ApiResponse<Proprio> updateProprio(@PathVariable Long id, @RequestBody Proprio proprio) {
+        Proprio updatedProprio = proprioService.updateById(id, proprio);
+        return ApiResponse.success(updatedProprio, "Proprio modifie");
     }
 
     @DeleteMapping("/api/proprios/{id}")

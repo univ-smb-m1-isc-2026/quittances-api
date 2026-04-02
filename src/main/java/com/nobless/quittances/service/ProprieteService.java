@@ -70,4 +70,67 @@ public class ProprieteService {
     public void deleteById(Long id) {
         proprieteRepository.deleteById(id);
     }
+
+    public Propriete updateById(Long id, Propriete payload) {
+        Propriete existing = proprieteRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "propriete introuvable"));
+
+        if (payload.getAdresse() != null) {
+            existing.setAdresse(payload.getAdresse());
+        }
+        if (payload.getVille() != null) {
+            existing.setVille(payload.getVille());
+        }
+        if (payload.getPays() != null) {
+            existing.setPays(payload.getPays());
+        }
+        if (payload.getSurfaceM2() != null) {
+            existing.setSurfaceM2(payload.getSurfaceM2());
+        }
+        if (payload.getLoyer() != null) {
+            existing.setLoyer(payload.getLoyer());
+        }
+        if (payload.getCharges() != null) {
+            existing.setCharges(payload.getCharges());
+        }
+        if (payload.getDureeBail() != null) {
+            existing.setDureeBail(payload.getDureeBail());
+        }
+        if (payload.getPeriodicite() != null) {
+            existing.setPeriodicite(payload.getPeriodicite());
+        }
+        if (payload.getInfosComplementaires() != null) {
+            existing.setInfosComplementaires(payload.getInfosComplementaires());
+        }
+        if (payload.getImage() != null) {
+            existing.setImage(payload.getImage());
+        }
+
+        if (payload.getType() != null) {
+            String normalizedType = payload.getType().trim().toUpperCase();
+            if (!ALLOWED_TYPES.contains(normalizedType)) {
+                throw new ResponseStatusException(
+                        HttpStatus.BAD_REQUEST,
+                        "type invalide: valeurs autorisees STUDIO, T1, T2, T3, T4, T5, DUPLEX, TRIPLEX, SOUPLEX, LOFT"
+                );
+            }
+            existing.setType(normalizedType);
+        }
+
+        if (payload.getIdProprio() != null) {
+            if (!proprioRepository.existsById(payload.getIdProprio())) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "idProprio invalide: proprietaire introuvable");
+            }
+            existing.setIdProprio(payload.getIdProprio());
+        }
+
+        if (payload.getIdLocataire() != null) {
+            if (!locataireRepository.existsById(payload.getIdLocataire())) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "idLocataire invalide: locataire introuvable");
+            }
+            existing.setIdLocataire(payload.getIdLocataire());
+        }
+
+        return proprieteRepository.save(existing);
+    }
 }

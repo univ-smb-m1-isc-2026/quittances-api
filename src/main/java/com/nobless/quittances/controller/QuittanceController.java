@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -55,6 +56,13 @@ public class QuittanceController {
         Quittance createdQuittance = quittanceService.create(quittance);
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(ApiResponse.success(createdQuittance, "Quittance creee"));
+    }
+
+    @PutMapping("/api/quittances/{id}")
+    public ApiResponse<Quittance> updateQuittance(@PathVariable Long id, @RequestBody Quittance quittance) {
+        log.info("PUT /api/quittances/{} - update quittance", id);
+        Quittance updatedQuittance = quittanceService.updateById(id, quittance);
+        return ApiResponse.success(updatedQuittance, "Quittance modifiee");
     }
 
     @DeleteMapping("/api/quittances/{id}")

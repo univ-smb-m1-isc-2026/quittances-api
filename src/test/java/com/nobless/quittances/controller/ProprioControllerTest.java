@@ -21,6 +21,7 @@ import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -59,6 +60,21 @@ class ProprioControllerTest {
                         .content("{\"nom\":\"Doe\",\"prenom\":\"John\",\"email\":\"mail@test.com\",\"telephone\":\"0600000000\",\"password\":\"pwd\"}"))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.state").value("[SUCCESS] Proprio cree"));
+    }
+
+    @Test
+    void updateProprio_returnsSuccess() throws Exception {
+        Proprio proprio = new Proprio();
+        proprio.setId(1L);
+        proprio.setNom("Doe");
+
+        when(proprioService.updateById(eq(1L), any(Proprio.class))).thenReturn(proprio);
+
+        mockMvc.perform(put("/api/proprios/1")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"nom\":\"Doe\"}"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.state").value("[SUCCESS] Proprio modifie"));
     }
 
     @Test

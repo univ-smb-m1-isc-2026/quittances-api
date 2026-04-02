@@ -7,6 +7,8 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Collections;
 import java.util.List;
@@ -91,5 +93,36 @@ class QuittanceServiceTest {
 
         // Assert
         verify(quittanceRepository, times(1)).deleteById(1L);
+    }
+
+    @Test
+    void updateById_existingQuittance_updatesAndReturns() {
+        Quittance existing = new Quittance();
+        existing.setId(5L);
+        existing.setPeriod("mars 2026");
+
+        Quittance payload = new Quittance();
+        payload.setPeriod("avril 2026");
+        payload.setSignatureCity("Paris");
+
+        when(quittanceRepository.findById(5L)).thenReturn(Optional.of(existing));
+        when(quittanceRepository.save(existing)).thenReturn(existing);
+
+        Quittance result = quittanceService.updateById(5L, payload);
+
+        assertEquals("avril 2026", result.getPeriod());
+        assertEquals("Paris", result.getSignatureCity());
+        verify(quittanceRepository).save(existing);
+    }
+
+    @Test
+    void updateById_notFound_throwsNotFound() {
+        when(quittanceRepository.findById(999L)).thenReturn(Optional.empty());
+
+        ResponseStatusException ex = assertThrows(ResponseStatusException.class,
+                () -> quittanceService.updateById(999L, new Quittance()));
+
+        assertEquals(HttpStatus.NOT_FOUND, ex.getStatusCode());
+        assertTrue(ex.getReason().contains("quittance introuvable"));
     }
 }
