@@ -89,6 +89,15 @@ curl -i http://localhost:8080/api/proprios \
 | POST    | [/api/proprietes](#route-post-api-proprietes)      | Creer une propriete     |
 | DELETE  | [/api/proprietes/{id}](#route-delete-api-proprietes-id) | Supprimer une propriete |
 
+### Acces table `quittances`
+
+| Methode | Route                | Description             |
+|---------|----------------------|-------------------------|
+| GET     | [/api/quittances](#route-get-api-quittances)      | Lister les quittances   |
+| GET     | [/api/quittances/{id_proprios}](#route-get-api-quittances-id-proprios) | Lister les quittances d'un proprietaire |
+| POST    | [/api/quittances](#route-post-api-quittances)      | Creer une quittance     |
+| DELETE  | [/api/quittances/{id}](#route-delete-api-quittances-id) | Supprimer une quittance |
+
 <a id="route-get-api-health"></a>
 ## Sante de l'API
 
@@ -386,6 +395,128 @@ curl -i -X POST http://localhost:8080/api/proprietes \
 
 ```bash
 curl -i -X DELETE http://localhost:8080/api/proprietes/1
+```
+
+## Quittances
+
+<a id="route-get-api-quittances"></a>
+### Lister les quittances
+
+- Methode : GET
+- Route : /api/quittances
+
+```bash
+curl -i http://localhost:8080/api/quittances
+```
+
+<a id="route-get-api-quittances-id-proprios"></a>
+### Lister les quittances d'un proprietaire
+
+- Methode : GET
+- Route : /api/quittances/{id_proprios}
+
+```bash
+curl -i http://localhost:8080/api/quittances/1
+```
+
+<a id="route-post-api-quittances"></a>
+### Creer une quittance
+
+- Methode : POST
+- Route : /api/quittances
+- Content-Type : application/json
+
+Schema des entrees (`POST /api/quittances`) - table `quittances` :
+
+| Nom             | Type Java | Nullable |
+|-----------------|-----------|----------|
+| idProprio       | Long      | Non      |
+| lessor          | Object    | Oui      |
+| tenant          | Object    | Oui      |
+| propertyAddress | String    | Oui      |
+| propertyCity    | String    | Oui      |
+| rent            | Double    | Oui      |
+| charges         | Double    | Oui      |
+| period          | String    | Oui      |
+| paymentDate     | String    | Oui      |
+| signatureCity   | String    | Oui      |
+| signatureImage  | String    | Oui      |
+
+Notes :
+- Le champ `id` est genere automatiquement.
+- L'objet `lessor` correspond aux champs : `name`, `address`, `city`, `phone`, `email`.
+- L'objet `tenant` correspond aux champs : `name`, `address`, `city`, `phone`, `email`.
+
+Payload attendu :
+
+```json
+{
+	"idProprio": 1,
+	"lessor": {
+		"name": "Jean Dupont",
+		"address": "12 rue de la Paix",
+		"city": "75001 Paris",
+		"phone": "06 00 00 00 00",
+		"email": "bailleur@exemple.fr"
+	},
+	"tenant": {
+		"name": "Alice Martin",
+		"address": "5 avenue des Lilas",
+		"city": "69001 Lyon",
+		"phone": "06 11 11 11 11",
+		"email": "locataire@exemple.fr"
+	},
+	"propertyAddress": "8 impasse des Roses",
+	"propertyCity": "13001 Marseille",
+	"rent": 800.0,
+	"charges": 50.0,
+	"period": "février 2026",
+	"paymentDate": "01/02/2026",
+	"signatureCity": "Paris",
+	"signatureImage": "data:image/png;base64,iVBORw0K..."
+}
+```
+
+Exemple curl :
+
+```bash
+curl -i -X POST http://localhost:8080/api/quittances \
+	-H "Content-Type: application/json" \
+	-d '{
+		"idProprio": 1,
+		"lessor": {
+			"name": "Jean Dupont",
+			"address": "12 rue de la Paix",
+			"city": "75001 Paris",
+			"phone": "06 00 00 00 00",
+			"email": "bailleur@exemple.fr"
+		},
+		"tenant": {
+			"name": "Alice Martin",
+			"address": "5 avenue des Lilas",
+			"city": "69001 Lyon",
+			"phone": "06 11 11 11 11",
+			"email": "locataire@exemple.fr"
+		},
+		"propertyAddress": "8 impasse des Roses",
+		"propertyCity": "13001 Marseille",
+		"rent": 800.0,
+		"charges": 50.0,
+		"period": "février 2026",
+		"paymentDate": "01/02/2026",
+		"signatureCity": "Paris",
+		"signatureImage": "data:image/png;base64,iVBORw0K..."
+	}'
+```
+
+<a id="route-delete-api-quittances-id"></a>
+### Supprimer une quittance
+
+- Methode : DELETE
+- Route : /api/quittances/{id}
+
+```bash
+curl -i -X DELETE http://localhost:8080/api/quittances/1
 ```
 
 ## Notes
