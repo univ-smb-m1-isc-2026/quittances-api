@@ -69,6 +69,7 @@ curl -i http://localhost:8080/api/proprios \
 |---------|--------------------|---------------------------|
 | GET     | [/api/proprios](#route-get-api-proprios)      | Lister les proprietaires  |
 | POST    | [/api/proprios](#route-post-api-proprios)      | Creer un proprietaire     |
+| PUT     | [/api/proprios/{id}](#route-put-api-proprios-id) | Modifier un proprietaire |
 | POST    | [/api/proprios/login](#route-post-api-proprios-login) | Connexion proprietaire |
 | DELETE  | [/api/proprios/{id}](#route-delete-api-proprios-id) | Supprimer un proprietaire |
 
@@ -78,6 +79,7 @@ curl -i http://localhost:8080/api/proprios \
 |---------|----------------------|-------------------------|
 | GET     | [/api/locataires](#route-get-api-locataires)      | Lister les locataires   |
 | POST    | [/api/locataires](#route-post-api-locataires)      | Creer un locataire      |
+| PUT     | [/api/locataires/{id}](#route-put-api-locataires-id) | Modifier un locataire |
 | DELETE  | [/api/locataires/{id}](#route-delete-api-locataires-id) | Supprimer un locataire  |
 
 ### Acces table `proprietes`
@@ -87,6 +89,7 @@ curl -i http://localhost:8080/api/proprios \
 | GET     | [/api/proprietes](#route-get-api-proprietes)      | Lister les proprietes   |
 | GET     | [/api/proprietes/{proprio_id}](#route-get-api-proprietes-id-proprios) | Lister les proprietes d'un proprietaire |
 | POST    | [/api/proprietes](#route-post-api-proprietes)      | Creer une propriete     |
+| PUT     | [/api/proprietes/{id}](#route-put-api-proprietes-id) | Modifier une propriete |
 | DELETE  | [/api/proprietes/{id}](#route-delete-api-proprietes-id) | Supprimer une propriete |
 
 ### Acces table `quittances`
@@ -96,6 +99,7 @@ curl -i http://localhost:8080/api/proprios \
 | GET     | [/api/quittances](#route-get-api-quittances)      | Lister les quittances   |
 | GET     | [/api/quittances/{proprio_id}](#route-get-api-quittances-proprio-id) | Lister les quittances d'un proprietaire |
 | POST    | [/api/quittances](#route-post-api-quittances)      | Creer une quittance     |
+| PUT     | [/api/quittances/{id}](#route-put-api-quittances-id) | Modifier une quittance |
 | DELETE  | [/api/quittances/{id}](#route-delete-api-quittances-id) | Supprimer une quittance |
 
 <a id="route-get-api-health"></a>
@@ -175,6 +179,35 @@ curl -i -X POST http://localhost:8080/api/proprios \
 
 ```bash
 curl -i -X DELETE http://localhost:8080/api/proprios/1
+```
+
+<a id="route-put-api-proprios-id"></a>
+### Modifier un proprietaire
+
+- Methode : PUT
+- Route : /api/proprios/{id}
+- Content-Type : application/json
+
+Payload partiel accepte (exemple) :
+
+```json
+{
+	"nom": "Dupont",
+	"prenom": "Jean",
+	"telephone": "0611111111"
+}
+```
+
+Exemple curl :
+
+```bash
+curl -i -X PUT http://localhost:8080/api/proprios/1 \
+	-H "Content-Type: application/json" \
+	-d '{
+		"nom": "Dupont",
+		"prenom": "Jean",
+		"telephone": "0611111111"
+	}'
 ```
 
 <a id="route-post-api-proprios-login"></a>
@@ -281,6 +314,33 @@ curl -i -X POST http://localhost:8080/api/locataires \
 
 ```bash
 curl -i -X DELETE http://localhost:8080/api/locataires/1
+```
+
+<a id="route-put-api-locataires-id"></a>
+### Modifier un locataire
+
+- Methode : PUT
+- Route : /api/locataires/{id}
+- Content-Type : application/json
+
+Payload partiel accepte (exemple) :
+
+```json
+{
+	"nom": "Martin",
+	"prenom": "Alice"
+}
+```
+
+Exemple curl :
+
+```bash
+curl -i -X PUT http://localhost:8080/api/locataires/1 \
+	-H "Content-Type: application/json" \
+	-d '{
+		"nom": "Martin",
+		"prenom": "Alice"
+	}'
 ```
 
 ## Proprietes
@@ -397,6 +457,37 @@ curl -i -X POST http://localhost:8080/api/proprietes \
 curl -i -X DELETE http://localhost:8080/api/proprietes/1
 ```
 
+<a id="route-put-api-proprietes-id"></a>
+### Modifier une propriete
+
+- Methode : PUT
+- Route : /api/proprietes/{id}
+- Content-Type : application/json
+
+Payload partiel accepte (exemple) :
+
+```json
+{
+	"adresse": "14 rue Victor Hugo",
+	"ville": "Paris",
+	"loyer": 1300.0,
+	"charges": 140.0
+}
+```
+
+Exemple curl :
+
+```bash
+curl -i -X PUT http://localhost:8080/api/proprietes/1 \
+	-H "Content-Type: application/json" \
+	-d '{
+		"adresse": "14 rue Victor Hugo",
+		"ville": "Paris",
+		"loyer": 1300.0,
+		"charges": 140.0
+	}'
+```
+
 ## Quittances
 
 <a id="route-get-api-quittances"></a>
@@ -494,6 +585,35 @@ curl -i -X POST http://localhost:8080/api/quittances \
 
 ```bash
 curl -i -X DELETE http://localhost:8080/api/quittances/1
+```
+
+<a id="route-put-api-quittances-id"></a>
+### Modifier une quittance
+
+- Methode : PUT
+- Route : /api/quittances/{id}
+- Content-Type : application/json
+
+Payload partiel accepte (exemple) :
+
+```json
+{
+	"period": "mars 2026",
+	"paymentDate": "01/03/2026",
+	"signatureCity": "Paris"
+}
+```
+
+Exemple curl :
+
+```bash
+curl -i -X PUT http://localhost:8080/api/quittances/1 \
+	-H "Content-Type: application/json" \
+	-d '{
+		"period": "mars 2026",
+		"paymentDate": "01/03/2026",
+		"signatureCity": "Paris"
+	}'
 ```
 
 ## Notes

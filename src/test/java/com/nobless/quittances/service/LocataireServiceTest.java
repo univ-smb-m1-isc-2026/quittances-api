@@ -7,9 +7,12 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -66,5 +69,37 @@ class LocataireServiceTest {
 
         // Assert
         verify(locataireRepository, times(1)).deleteById(1L);
+    }
+
+    @Test
+    void updateById_existingLocataire_updatesAndReturns() {
+        Locataire existing = new Locataire();
+        existing.setId(1L);
+        existing.setNom("Old");
+
+        Locataire payload = new Locataire();
+        payload.setNom("New");
+        payload.setPrenom("Name");
+
+        when(locataireRepository.findById(1L)).thenReturn(Optional.of(existing));
+        when(locataireRepository.save(existing)).thenReturn(existing);
+
+        Locataire result = locataireService.updateById(1L, payload);
+
+        assertEquals("New", result.getNom());
+        assertEquals("Name", result.getPrenom());
+        verify(locataireRepository).findById(1L);
+        verify(locataireRepository).save(existing);
+    }
+
+    @Test
+    void updateById_notFound_throwsNotFound() {
+        when(locataireRepository.findById(999L)).thenReturn(Optional.empty());
+
+        ResponseStatusException ex = assertThrows(ResponseStatusException.class,
+                () -> locataireService.updateById(999L, new Locataire()));
+
+        assertEquals(HttpStatus.NOT_FOUND, ex.getStatusCode());
+        assertTrue(ex.getReason().contains("locataire introuvable"));
     }
 }

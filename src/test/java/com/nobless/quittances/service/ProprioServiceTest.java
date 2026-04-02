@@ -7,10 +7,13 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -90,5 +93,44 @@ class ProprioServiceTest {
         // Assert
         assertTrue(result.isEmpty());
         verify(proprioRepository, times(1)).findAll();
+    }
+
+    @Test
+    void deleteById_callsRepositoryDelete() {
+        proprioService.deleteById(1L);
+        verify(proprioRepository).deleteById(1L);
+    }
+
+    @Test
+    void updateById_existingProprio_updatesAndEncodesPassword() {
+        Proprio existing = new Proprio();
+        existing.setId(1L);
+        existing.setPassword("oldEncoded");
+
+        Proprio payload = new Proprio();
+        payload.setNom("Doe");
+        payload.setPassword("newPass");
+
+        when(proprioRepository.findById(1L)).thenReturn(Optional.of(existing));
+        when(passwordEncoder.encode("newPass")).thenReturn("newEncoded");
+        when(proprioRepository.save(existing)).thenReturn(existing);
+
+        Proprio result = proprioService.updateById(1L, payload);
+
+        assertEquals("Doe", result.getNom());
+        assertEquals("newEncoded", result.getPassword());
+        verify(passwordEncoder).encode("newPass");
+        verify(proprioRepository).save(existing);
+    }
+
+    @Test
+    void updateById_notFound_throwsNotFound() {
+        when(proprioRepository.findById(404L)).thenReturn(Optional.empty());
+
+        ResponseStatusException ex = assertThrows(ResponseStatusException.class,
+                () -> proprioService.updateById(404L, new Proprio()));
+
+        assertEquals(HttpStatus.NOT_FOUND, ex.getStatusCode());
+        assertTrue(ex.getReason().contains("proprio introuvable"));
     }
 }

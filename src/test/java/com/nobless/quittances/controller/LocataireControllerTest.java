@@ -52,6 +52,21 @@ class LocataireControllerTest {
     }
 
     @Test
+    void updateLocataire_returnsSuccess() throws Exception {
+        Locataire l = new Locataire();
+        l.setNom("User");
+        l.setPrenom("Updated");
+
+        when(locataireService.updateById(any(Long.class), any(Locataire.class))).thenReturn(l);
+
+        mockMvc.perform(put("/api/locataires/1")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\"prenom\":\"Updated\",\"nom\":\"User\"}"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.state").value("[SUCCESS] Locataire modifie"));
+    }
+
+    @Test
     void deleteLocataire_returnsSuccess() throws Exception {
         mockMvc.perform(delete("/api/locataires/1"))
                 .andExpect(status().isOk())

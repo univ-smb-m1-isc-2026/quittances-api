@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -43,6 +44,12 @@ public class LocataireController {
         Locataire createdLocataire = LocataireService.create(locataire);
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(ApiResponse.success(createdLocataire, "Locataire cree"));
+    }
+
+    @PutMapping("/api/locataires/{id}")
+    public ApiResponse<Locataire> updateLocataire(@PathVariable Long id, @RequestBody Locataire locataire) {
+        Locataire updatedLocataire = LocataireService.updateById(id, locataire);
+        return ApiResponse.success(updatedLocataire, "Locataire modifie");
     }
 
     @DeleteMapping("/api/locataires/{id}")

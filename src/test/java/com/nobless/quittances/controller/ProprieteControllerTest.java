@@ -14,11 +14,13 @@ import org.springframework.test.web.servlet.MockMvc;
 import java.util.Collections;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -66,6 +68,21 @@ class ProprieteControllerTest {
                         .content("{\"adresse\":\"10 rue des Lilas\"}"))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.state").value("[SUCCESS] Propriete creee"));
+    }
+
+    @Test
+    void updatePropriete_returnsSuccess() throws Exception {
+        Propriete propriete = new Propriete();
+        propriete.setId(10L);
+        propriete.setAdresse("11 rue des Lilas");
+
+        when(proprieteService.updateById(eq(10L), any(Propriete.class))).thenReturn(propriete);
+
+        mockMvc.perform(put("/api/proprietes/10")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"adresse\":\"11 rue des Lilas\"}"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.state").value("[SUCCESS] Propriete modifiee"));
     }
 
     @Test

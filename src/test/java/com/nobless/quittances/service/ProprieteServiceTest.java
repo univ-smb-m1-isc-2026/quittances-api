@@ -14,6 +14,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -98,6 +99,53 @@ class ProprieteServiceTest {
         // Assert
         assertTrue(result.isEmpty());
         verify(proprieteRepository, times(1)).findAll();
+    }
+
+    @Test
+    void listByIdProprio_returnsMatchingProprietes() {
+        when(proprieteRepository.findByIdProprio(1L)).thenReturn(Collections.emptyList());
+
+        List<Propriete> result = proprieteService.listByIdProprio(1L);
+
+        assertNotNull(result);
+        verify(proprieteRepository).findByIdProprio(1L);
+    }
+
+    @Test
+    void updateById_existingPropriete_updatesAndSaves() {
+        Propriete existing = new Propriete();
+        existing.setId(10L);
+        existing.setType("T2");
+
+        Propriete payload = new Propriete();
+        payload.setAdresse("14 rue Victor Hugo");
+        payload.setType("duplex");
+        payload.setIdProprio(1L);
+        payload.setIdLocataire(2L);
+
+        when(proprieteRepository.findById(10L)).thenReturn(Optional.of(existing));
+        when(proprioRepository.existsById(1L)).thenReturn(true);
+        when(locataireRepository.existsById(2L)).thenReturn(true);
+        when(proprieteRepository.save(existing)).thenReturn(existing);
+
+        Propriete result = proprieteService.updateById(10L, payload);
+
+        assertEquals("14 rue Victor Hugo", result.getAdresse());
+        assertEquals("DUPLEX", result.getType());
+        assertEquals(1L, result.getIdProprio());
+        assertEquals(2L, result.getIdLocataire());
+        verify(proprieteRepository).save(existing);
+    }
+
+    @Test
+    void updateById_notFound_throwsNotFound() {
+        when(proprieteRepository.findById(404L)).thenReturn(Optional.empty());
+
+        ResponseStatusException ex = assertThrows(ResponseStatusException.class,
+                () -> proprieteService.updateById(404L, new Propriete()));
+
+        assertEquals(HttpStatus.NOT_FOUND, ex.getStatusCode());
+        assertTrue(ex.getReason().contains("propriete introuvable"));
     }
 
     @Test

@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -54,6 +55,12 @@ public class ProprieteController {
         Propriete createdPropriete = proprieteService.create(propriete);
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(ApiResponse.success(createdPropriete, "Propriete creee"));
+    }
+
+    @PutMapping("/api/proprietes/{id}")
+    public ApiResponse<Propriete> updatePropriete(@PathVariable Long id, @RequestBody Propriete propriete) {
+        Propriete updatedPropriete = proprieteService.updateById(id, propriete);
+        return ApiResponse.success(updatedPropriete, "Propriete modifiee");
     }
 
     @DeleteMapping("/api/proprietes/{id}")
