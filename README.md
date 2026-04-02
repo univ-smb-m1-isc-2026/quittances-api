@@ -73,6 +73,15 @@ curl -i http://localhost:8080/api/proprios \
 | POST    | [/api/proprios/login](#route-post-api-proprios-login) | Connexion proprietaire |
 | DELETE  | [/api/proprios/{id}](#route-delete-api-proprios-id) | Supprimer un proprietaire |
 
+### Acces table `admins`
+
+| Methode | Route              | Description               |
+|---------|--------------------|---------------------------|
+| GET     | [/api/admins](#route-get-api-admins)      | Lister les admins  |
+| POST    | [/api/admins](#route-post-api-admins)      | Creer un admin     |
+| PUT     | [/api/admins/{id}](#route-put-api-admins-id) | Modifier un admin |
+| DELETE  | [/api/admins/{id}](#route-delete-api-admins-id) | Supprimer un admin |
+
 ### Acces table `locataires`
 
 | Methode | Route                | Description             |
@@ -250,6 +259,93 @@ curl -i -X POST http://localhost:8080/api/proprios/login \
 		"email": "jean.dupont@example.com",
 		"password": "secret123"
 	}'
+```
+
+## Admins
+
+<a id="route-get-api-admins"></a>
+### Lister les admins
+
+- Methode : GET
+- Route : /api/admins
+
+```bash
+curl -i http://localhost:8080/api/admins
+```
+
+<a id="route-post-api-admins"></a>
+### Creer un admin
+
+- Methode : POST
+- Route : /api/admins
+- Content-Type : application/json
+
+Schema des entrees (`POST /api/admins`) - table `admins` :
+
+| Nom      | Type Java | Nullable | Unique |
+|----------|-----------|----------|--------|
+| login    | String    | Non      | Oui    |
+| password | String    | Non      | Non    |
+
+Notes :
+- Le champ `id` est genere automatiquement.
+- Le champ `password` est hache par le backend.
+
+Payload attendu :
+
+```json
+{
+	"login": "admin",
+	"password": "secret123"
+}
+```
+
+Exemple curl :
+
+```bash
+curl -i -X POST http://localhost:8080/api/admins \
+	-H "Content-Type: application/json" \
+	-d '{
+		"login": "admin",
+		"password": "secret123"
+	}'
+```
+
+<a id="route-put-api-admins-id"></a>
+### Modifier un admin
+
+- Methode : PUT
+- Route : /api/admins/{id}
+- Content-Type : application/json
+
+Payload partiel accepte (exemple) :
+
+```json
+{
+	"login": "admin2",
+	"password": "newSecret123"
+}
+```
+
+Exemple curl :
+
+```bash
+curl -i -X PUT http://localhost:8080/api/admins/1 \
+	-H "Content-Type: application/json" \
+	-d '{
+		"login": "admin2",
+		"password": "newSecret123"
+	}'
+```
+
+<a id="route-delete-api-admins-id"></a>
+### Supprimer un admin
+
+- Methode : DELETE
+- Route : /api/admins/{id}
+
+```bash
+curl -i -X DELETE http://localhost:8080/api/admins/1
 ```
 
 ## Locataires

@@ -37,30 +37,43 @@ public class ProprioController {
 
     @GetMapping("/api/proprios")
     public ApiResponse<List<Proprio>> listProprios() {
+        log.info("GET /api/proprios - listing proprios");
         List<Proprio> proprios = proprioService.list();
         if (proprios.isEmpty()) {
-            return ApiResponse.info(proprios, "Aucun proprio en bdd");
+            ApiResponse<List<Proprio>> response = ApiResponse.info(proprios, "Aucun proprio en bdd");
+            log.info("GET /api/proprios - response state={}", response.getState());
+            return response;
         }
-        return ApiResponse.success(proprios);
+        ApiResponse<List<Proprio>> response = ApiResponse.success(proprios);
+        log.info("GET /api/proprios - returned {} items, state={}", proprios.size(), response.getState());
+        return response;
     }
 
     @PostMapping("/api/proprios")
     public ResponseEntity<ApiResponse<Proprio>> createProprio(@RequestBody Proprio proprio) {
+        log.info("POST /api/proprios - create proprio request for email={}", proprio.getEmail());
         Proprio createdProprio = proprioService.create(proprio);
-        return ResponseEntity.status(HttpStatus.CREATED)
-                .body(ApiResponse.success(createdProprio, "Proprio cree"));
+        ApiResponse<Proprio> response = ApiResponse.success(createdProprio, "Proprio cree");
+        log.info("POST /api/proprios - created proprio id={}, state={}", createdProprio.getId(), response.getState());
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
     @PutMapping("/api/proprios/{id}")
     public ApiResponse<Proprio> updateProprio(@PathVariable Long id, @RequestBody Proprio proprio) {
+        log.info("PUT /api/proprios/{} - update proprio request", id);
         Proprio updatedProprio = proprioService.updateById(id, proprio);
-        return ApiResponse.success(updatedProprio, "Proprio modifie");
+        ApiResponse<Proprio> response = ApiResponse.success(updatedProprio, "Proprio modifie");
+        log.info("PUT /api/proprios/{} - response state={}", id, response.getState());
+        return response;
     }
 
     @DeleteMapping("/api/proprios/{id}")
     public ApiResponse<Void> deleteProprio(@PathVariable Long id) {
+        log.info("DELETE /api/proprios/{} - delete proprio request", id);
         proprioService.deleteById(id);
-        return ApiResponse.success(null, "Proprio supprime");
+        ApiResponse<Void> response = ApiResponse.success(null, "Proprio supprime");
+        log.info("DELETE /api/proprios/{} - response state={}", id, response.getState());
+        return response;
     }
 
     @PostMapping("/api/proprios/login")

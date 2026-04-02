@@ -54,21 +54,26 @@ public class QuittanceController {
     public ResponseEntity<ApiResponse<Quittance>> createQuittance(@RequestBody Quittance quittance) {
         log.info("POST /api/quittances - create new quittance");
         Quittance createdQuittance = quittanceService.create(quittance);
-        return ResponseEntity.status(HttpStatus.CREATED)
-                .body(ApiResponse.success(createdQuittance, "Quittance creee"));
+        ApiResponse<Quittance> response = ApiResponse.success(createdQuittance, "Quittance creee");
+        log.info("POST /api/quittances - created quittance id={}, state={}", createdQuittance.getId(), response.getState());
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
     @PutMapping("/api/quittances/{id}")
     public ApiResponse<Quittance> updateQuittance(@PathVariable Long id, @RequestBody Quittance quittance) {
         log.info("PUT /api/quittances/{} - update quittance", id);
         Quittance updatedQuittance = quittanceService.updateById(id, quittance);
-        return ApiResponse.success(updatedQuittance, "Quittance modifiee");
+        ApiResponse<Quittance> response = ApiResponse.success(updatedQuittance, "Quittance modifiee");
+        log.info("PUT /api/quittances/{} - response state={}", id, response.getState());
+        return response;
     }
 
     @DeleteMapping("/api/quittances/{id}")
     public ApiResponse<Void> deleteQuittance(@PathVariable Long id) {
         log.info("DELETE /api/quittances/{} - delete quittance", id);
         quittanceService.delete(id);
-        return ApiResponse.success(null, "Quittance supprimee");
+        ApiResponse<Void> response = ApiResponse.success(null, "Quittance supprimee");
+        log.info("DELETE /api/quittances/{} - response state={}", id, response.getState());
+        return response;
     }
 }

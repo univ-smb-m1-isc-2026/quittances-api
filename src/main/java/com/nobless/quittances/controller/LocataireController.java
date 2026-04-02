@@ -30,31 +30,43 @@ public class LocataireController {
 
     @GetMapping("/api/locataires")
     public ApiResponse<List<Locataire>> listLocataires() {
-        log.info("GET /api/proprios - listing proprietaires");
-        List<Locataire> proprios = LocataireService.list();
-        log.info("GET /api/proprios - {} proprietaires returned", proprios.size());
-        if (proprios.isEmpty()) {
-            return ApiResponse.info(proprios, "Aucun locataire en bdd");
+        log.info("GET /api/locataires - listing locataires");
+        List<Locataire> locataires = LocataireService.list();
+        log.info("GET /api/locataires - {} locataires returned", locataires.size());
+        if (locataires.isEmpty()) {
+            ApiResponse<List<Locataire>> response = ApiResponse.info(locataires, "Aucun locataire en bdd");
+            log.info("GET /api/locataires - response state={}", response.getState());
+            return response;
         }
-        return ApiResponse.success(proprios);
+        ApiResponse<List<Locataire>> response = ApiResponse.success(locataires);
+        log.info("GET /api/locataires - response state={}", response.getState());
+        return response;
     }
 
     @PostMapping("/api/locataires")
     public ResponseEntity<ApiResponse<Locataire>> createLocataire(@RequestBody Locataire locataire) {
+        log.info("POST /api/locataires - create locataire request");
         Locataire createdLocataire = LocataireService.create(locataire);
-        return ResponseEntity.status(HttpStatus.CREATED)
-                .body(ApiResponse.success(createdLocataire, "Locataire cree"));
+        ApiResponse<Locataire> response = ApiResponse.success(createdLocataire, "Locataire cree");
+        log.info("POST /api/locataires - created locataire id={}, state={}", createdLocataire.getId(), response.getState());
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
     @PutMapping("/api/locataires/{id}")
     public ApiResponse<Locataire> updateLocataire(@PathVariable Long id, @RequestBody Locataire locataire) {
+        log.info("PUT /api/locataires/{} - update locataire request", id);
         Locataire updatedLocataire = LocataireService.updateById(id, locataire);
-        return ApiResponse.success(updatedLocataire, "Locataire modifie");
+        ApiResponse<Locataire> response = ApiResponse.success(updatedLocataire, "Locataire modifie");
+        log.info("PUT /api/locataires/{} - response state={}", id, response.getState());
+        return response;
     }
 
     @DeleteMapping("/api/locataires/{id}")
     public ApiResponse<Void> deleteLocataire(@PathVariable Long id) {
+        log.info("DELETE /api/locataires/{} - delete locataire request", id);
         LocataireService.deleteById(id);
-        return ApiResponse.success(null, "Locataire supprime");
+        ApiResponse<Void> response = ApiResponse.success(null, "Locataire supprime");
+        log.info("DELETE /api/locataires/{} - response state={}", id, response.getState());
+        return response;
     }
 }

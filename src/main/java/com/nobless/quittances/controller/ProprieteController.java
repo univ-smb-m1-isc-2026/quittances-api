@@ -52,20 +52,28 @@ public class ProprieteController {
 
     @PostMapping("/api/proprietes")
     public ResponseEntity<ApiResponse<Propriete>> createPropriete(@RequestBody Propriete propriete) {
+        log.info("POST /api/proprietes - create propriete request");
         Propriete createdPropriete = proprieteService.create(propriete);
-        return ResponseEntity.status(HttpStatus.CREATED)
-                .body(ApiResponse.success(createdPropriete, "Propriete creee"));
+        ApiResponse<Propriete> response = ApiResponse.success(createdPropriete, "Propriete creee");
+        log.info("POST /api/proprietes - created propriete id={}, state={}", createdPropriete.getId(), response.getState());
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
     @PutMapping("/api/proprietes/{id}")
     public ApiResponse<Propriete> updatePropriete(@PathVariable Long id, @RequestBody Propriete propriete) {
+        log.info("PUT /api/proprietes/{} - update propriete request", id);
         Propriete updatedPropriete = proprieteService.updateById(id, propriete);
-        return ApiResponse.success(updatedPropriete, "Propriete modifiee");
+        ApiResponse<Propriete> response = ApiResponse.success(updatedPropriete, "Propriete modifiee");
+        log.info("PUT /api/proprietes/{} - response state={}", id, response.getState());
+        return response;
     }
 
     @DeleteMapping("/api/proprietes/{id}")
     public ApiResponse<Void> deletePropriete(@PathVariable Long id) {
+        log.info("DELETE /api/proprietes/{} - delete propriete request", id);
         proprieteService.deleteById(id);
-        return ApiResponse.success(null, "Propriete supprimee");
+        ApiResponse<Void> response = ApiResponse.success(null, "Propriete supprimee");
+        log.info("DELETE /api/proprietes/{} - response state={}", id, response.getState());
+        return response;
     }
 }
