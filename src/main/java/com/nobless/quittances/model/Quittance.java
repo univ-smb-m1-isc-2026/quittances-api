@@ -17,9 +17,6 @@ public class Quittance {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "id_proprio", nullable = false)
-    private Long idProprio;
-
     @ManyToOne
     @JoinColumn(name = "lessor_id")
     private Proprio lessor;
@@ -51,14 +48,6 @@ public class Quittance {
 
     public void setId(Long id) {
         this.id = id;
-    }
-
-    public Long getIdProprio() {
-        return idProprio;
-    }
-
-    public void setIdProprio(Long idProprio) {
-        this.idProprio = idProprio;
     }
 
     public Proprio getLessor() {

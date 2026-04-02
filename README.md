@@ -85,7 +85,7 @@ curl -i http://localhost:8080/api/proprios \
 | Methode | Route                | Description             |
 |---------|----------------------|-------------------------|
 | GET     | [/api/proprietes](#route-get-api-proprietes)      | Lister les proprietes   |
-| GET     | [/api/proprietes/{id_proprios}](#route-get-api-proprietes-id-proprios) | Lister les proprietes d'un proprietaire |
+| GET     | [/api/proprietes/{lessor_id}](#route-get-api-proprietes-id-proprios) | Lister les proprietes d'un proprietaire |
 | POST    | [/api/proprietes](#route-post-api-proprietes)      | Creer une propriete     |
 | DELETE  | [/api/proprietes/{id}](#route-delete-api-proprietes-id) | Supprimer une propriete |
 
@@ -94,7 +94,7 @@ curl -i http://localhost:8080/api/proprios \
 | Methode | Route                | Description             |
 |---------|----------------------|-------------------------|
 | GET     | [/api/quittances](#route-get-api-quittances)      | Lister les quittances   |
-| GET     | [/api/quittances/{id_proprios}](#route-get-api-quittances-id-proprios) | Lister les quittances d'un proprietaire |
+| GET     | [/api/quittances/{lessor_id}](#route-get-api-quittances-id-proprios) | Lister les quittances d'un proprietaire |
 | POST    | [/api/quittances](#route-post-api-quittances)      | Creer une quittance     |
 | DELETE  | [/api/quittances/{id}](#route-delete-api-quittances-id) | Supprimer une quittance |
 
@@ -299,7 +299,7 @@ curl -i http://localhost:8080/api/proprietes
 ### Lister les proprietes d'un proprietaire
 
 - Methode : GET
-- Route : /api/proprietes/{id_proprios}
+- Route : /api/proprietes/{lessor_id}
 
 ```bash
 curl -i http://localhost:8080/api/proprietes/1
@@ -413,7 +413,7 @@ curl -i http://localhost:8080/api/quittances
 ### Lister les quittances d'un proprietaire
 
 - Methode : GET
-- Route : /api/quittances/{id_proprios}
+- Route : /api/quittances/{lessor_id}
 
 ```bash
 curl -i http://localhost:8080/api/quittances/1
