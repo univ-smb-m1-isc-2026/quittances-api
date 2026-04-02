@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.nobless.quittances.controller.dto.LoginRequest;
 import com.nobless.quittances.controller.dto.JwtResponse;
+import com.nobless.quittances.controller.dto.ApiResponse;
 import com.nobless.quittances.security.JwtUtil;
 
 import java.util.List;
@@ -34,38 +35,44 @@ public class ProprioController {
     }
 
     @GetMapping("/api/proprios")
-    public List<Proprio> listProprios() {
-        log.info("GET /api/proprios - listing proprietaires");
+    public ApiResponse<List<Proprio>> listProprios() {
         List<Proprio> proprios = proprioService.list();
-        log.info("GET /api/proprios - {} proprietaires returned", proprios.size());
-        return proprios;
+        if (proprios.isEmpty()) {
+            return ApiResponse.info(proprios, "Aucun proprio en bdd");
+        }
+        return ApiResponse.success(proprios);
     }
 
     @PostMapping("/api/proprios")
-    public Proprio createProprio(@RequestBody Proprio proprio) {
-        return proprioService.create(proprio);
+    public ResponseEntity<ApiResponse<Proprio>> createProprio(@RequestBody Proprio proprio) {
+        Proprio createdProprio = proprioService.create(proprio);
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(ApiResponse.success(createdProprio, "Proprio cree"));
     }
 
     @DeleteMapping("/api/proprios/{id}")
-    public void deleteProprio(@PathVariable Long id) {
+    public ApiResponse<Void> deleteProprio(@PathVariable Long id) {
         proprioService.deleteById(id);
+        return ApiResponse.success(null, "Proprio supprime");
     }
 
     @PostMapping("/api/proprios/login")
-    public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest) {
+    public ResponseEntity<ApiResponse<JwtResponse>> login(@RequestBody LoginRequest loginRequest) {
         log.info("Tentative de connexion pour email: '{}'", loginRequest.getEmail());
         Proprio proprio = proprioService.findByEmail(loginRequest.getEmail());
         log.info("Résultat findByEmail('{}') = {}", loginRequest.getEmail(), proprio);
         if (proprio == null) {
             log.warn("Aucun proprio trouvé pour email: '{}'", loginRequest.getEmail());
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Identifiants invalides");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(ApiResponse.error("Identifiants invalides"));
         }
         if (!proprioService.passwordMatches(loginRequest.getPassword(), proprio.getPassword())) {
             log.warn("Mot de passe incorrect pour email: '{}'", loginRequest.getEmail());
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Identifiants invalides");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(ApiResponse.error("Identifiants invalides"));
         }
         String jwt = jwtUtil.generateToken(proprio);
         log.info("Connexion réussie pour email: '{}'", loginRequest.getEmail());
-        return ResponseEntity.ok(new JwtResponse(jwt));
+        return ResponseEntity.ok(ApiResponse.success(new JwtResponse(jwt), "Connexion reussie"));
     }
 }

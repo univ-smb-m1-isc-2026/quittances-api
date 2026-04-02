@@ -1,9 +1,12 @@
 package com.nobless.quittances.controller;
 
+import com.nobless.quittances.controller.dto.ApiResponse;
 import com.nobless.quittances.model.Locataire;
 import com.nobless.quittances.service.LocataireService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -25,20 +28,26 @@ public class LocataireController {
     }
 
     @GetMapping("/api/locataires")
-    public List<Locataire> listLocataires() {
+    public ApiResponse<List<Locataire>> listLocataires() {
         log.info("GET /api/proprios - listing proprietaires");
         List<Locataire> proprios = LocataireService.list();
         log.info("GET /api/proprios - {} proprietaires returned", proprios.size());
-        return proprios;
+        if (proprios.isEmpty()) {
+            return ApiResponse.info(proprios, "Aucun locataire en bdd");
+        }
+        return ApiResponse.success(proprios);
     }
 
     @PostMapping("/api/locataires")
-    public Locataire createLocataire(@RequestBody Locataire locataire) {
-        return LocataireService.create(locataire);
+    public ResponseEntity<ApiResponse<Locataire>> createLocataire(@RequestBody Locataire locataire) {
+        Locataire createdLocataire = LocataireService.create(locataire);
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(ApiResponse.success(createdLocataire, "Locataire cree"));
     }
 
     @DeleteMapping("/api/locataires/{id}")
-    public void deleteLocataire(@PathVariable Long id) {
+    public ApiResponse<Void> deleteLocataire(@PathVariable Long id) {
         LocataireService.deleteById(id);
+        return ApiResponse.success(null, "Locataire supprime");
     }
 }

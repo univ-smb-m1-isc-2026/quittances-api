@@ -7,7 +7,6 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.Lob;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
@@ -19,13 +18,19 @@ public class Propriete {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, unique = true, length = 255)
+    @Column(nullable = false, length = 255)
     private String adresse;
+
+    @Column(nullable = false, length = 255)
+    private String ville;
+
+    @Column(nullable = false, length = 255)
+    private String pays;
 
     @Column(nullable = false)
     private Double surfaceM2;
 
-    @Column(nullable = false, length = 2)
+    @Column(nullable = false, length = 20)
     private String type;
 
     @Column(nullable = false)
@@ -47,7 +52,8 @@ public class Propriete {
     )
     private Proprio proprio;
 
-    @Column(name = "id_locataire", nullable = false)
+
+    @Column(name = "id_locataire")
     private Long idLocataire;
 
     @ManyToOne
@@ -66,15 +72,19 @@ public class Propriete {
     @Column
     private Integer periodicite;
 
-    @Lob
     @Column(columnDefinition = "TEXT")
     private String infosComplementaires;
+
+    @Column
+    private String image;
 
     public Propriete() {
     }
 
     public Propriete(
         String adresse,
+        String ville,
+        String pays,
         Double surfaceM2,
         String type,
         Double loyer,
@@ -83,9 +93,12 @@ public class Propriete {
         Long idLocataire,
         Integer dureeBail,
         Integer periodicite,
-        String infosComplementaires
+        String infosComplementaires,
+        String image
     ) {
         this.adresse = adresse;
+        this.ville = ville;
+        this.pays = pays;
         this.surfaceM2 = surfaceM2;
         this.type = type;
         this.loyer = loyer;
@@ -95,6 +108,7 @@ public class Propriete {
         this.dureeBail = dureeBail;
         this.periodicite = periodicite;
         this.infosComplementaires = infosComplementaires;
+        this.image = image;
     }
 
     public Long getId() {
@@ -111,6 +125,22 @@ public class Propriete {
 
     public void setAdresse(String adresse) {
         this.adresse = adresse;
+    }
+
+    public String getVille() {
+        return ville;
+    }
+
+    public void setVille(String ville) {
+        this.ville = ville;
+    }
+
+    public String getPays() {
+        return pays;
+    }
+
+    public void setPays(String pays) {
+        this.pays = pays;
     }
 
     public Double getSurfaceM2() {
@@ -199,5 +229,12 @@ public class Propriete {
 
     public void setInfosComplementaires(String infosComplementaires) {
         this.infosComplementaires = infosComplementaires;
+    }
+
+    public String getImage(){
+        return image;
+    }
+    public void setImage(String image){
+        this.image = image;
     }
 }

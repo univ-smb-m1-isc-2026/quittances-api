@@ -85,9 +85,18 @@ curl -i http://localhost:8080/api/proprios \
 | Methode | Route                | Description             |
 |---------|----------------------|-------------------------|
 | GET     | [/api/proprietes](#route-get-api-proprietes)      | Lister les proprietes   |
-| GET     | [/api/proprietes/{id_proprios}](#route-get-api-proprietes-id-proprios) | Lister les proprietes d'un proprietaire |
+| GET     | [/api/proprietes/{proprio_id}](#route-get-api-proprietes-id-proprios) | Lister les proprietes d'un proprietaire |
 | POST    | [/api/proprietes](#route-post-api-proprietes)      | Creer une propriete     |
 | DELETE  | [/api/proprietes/{id}](#route-delete-api-proprietes-id) | Supprimer une propriete |
+
+### Acces table `quittances`
+
+| Methode | Route                | Description             |
+|---------|----------------------|-------------------------|
+| GET     | [/api/quittances](#route-get-api-quittances)      | Lister les quittances   |
+| GET     | [/api/quittances/{proprio_id}](#route-get-api-quittances-proprio-id) | Lister les quittances d'un proprietaire |
+| POST    | [/api/quittances](#route-post-api-quittances)      | Creer une quittance     |
+| DELETE  | [/api/quittances/{id}](#route-delete-api-quittances-id) | Supprimer une quittance |
 
 <a id="route-get-api-health"></a>
 ## Sante de l'API
@@ -290,7 +299,7 @@ curl -i http://localhost:8080/api/proprietes
 ### Lister les proprietes d'un proprietaire
 
 - Methode : GET
-- Route : /api/proprietes/{id_proprios}
+- Route : /api/proprietes/{proprio_id}
 
 ```bash
 curl -i http://localhost:8080/api/proprietes/1
@@ -307,7 +316,9 @@ Schema des entrees (`POST /api/proprietes`) - table `proprietes` :
 
 | Nom                 | Type Java | Nullable | Unique |
 |---------------------|-----------|----------|--------|
-| adresse             | String    | Non      | Oui    |
+| adresse             | String    | Non      | Non    |
+| ville               | String    | Non      | Non    |
+| pays                | String    | Non      | Non    |
 | surfaceM2           | Double    | Non      | Non    |
 | type                | String    | Non      | Non    |
 | loyer               | Double    | Non      | Non    |
@@ -317,26 +328,40 @@ Schema des entrees (`POST /api/proprietes`) - table `proprietes` :
 | dureeBail           | Integer   | Non      | Non    |
 | periodicite         | Integer   | Oui      | Non    |
 | infosComplementaires| String(TEXT) | Oui   | Non    |
+| image               | String    | Oui      | Non    |
 
 Notes :
 - Le champ `id` est genere automatiquement et ne doit pas etre fourni dans le payload.
 - `idProprio` est une cle etrangere vers `proprietaires.id`.
 - `idLocataire` est une cle etrangere vers `locataires.id`.
+- Le champ `type` est normalise en majuscules et doit etre une des valeurs autorisees :
+	- `STUDIO`
+	- `T1`, `T2`, `T3`, `T4`, `T5`
+	- `DUPLEX`, `TRIPLEX`, `SOUPLEX`
+	- `LOFT`
+
+Erreurs de validation possibles (HTTP 400) :
+- `type invalide: ...`
+- `idProprio invalide: proprietaire introuvable`
+- `idLocataire invalide: locataire introuvable`
 
 Payload attendu :
 
 ```json
 {
 	"adresse": "12 rue Victor Hugo, Paris",
+	"ville": "Paris",
+	"pays": "France",
 	"surfaceM2": 54.5,
-	"type": "Appartement",
+	"type": "T2",
 	"loyer": 1250.0,
 	"charges": 120.0,
 	"idProprio": 1,
 	"idLocataire": 1,
 	"dureeBail": 36,
 	"periodicite": 1,
-	"infosComplementaires": "Appartement renove, 3eme etage, proche metro."
+	"infosComplementaires": "Appartement renove, 3eme etage, proche metro.",
+	"image": "https://example.com/images/propriete-1.jpg"
 }
 ```
 
@@ -346,16 +371,19 @@ Exemple curl :
 curl -i -X POST http://localhost:8080/api/proprietes \
 	-H "Content-Type: application/json" \
 	-d '{
-		"adresse": "12 rue Victor Hugo, Paris",
+		"adresse": "12 rue Victor Hugo",
+		"ville": "Paris",
+		"pays": "France",
 		"surfaceM2": 54.5,
-		"type": "Appartement",
+		"type": "DUPLEX",
 		"loyer": 1250.0,
 		"charges": 120.0,
 		"idProprio": 1,
 		"idLocataire": 1,
 		"dureeBail": 36,
 		"periodicite": 1,
-		"infosComplementaires": "Appartement renove, 3eme etage, proche metro."
+		"infosComplementaires": "Appartement renove, 3eme etage, proche metro.",
+		"image": "https://example.com/images/propriete-1.jpg"
 	}'
 ```
 
@@ -367,6 +395,105 @@ curl -i -X POST http://localhost:8080/api/proprietes \
 
 ```bash
 curl -i -X DELETE http://localhost:8080/api/proprietes/1
+```
+
+## Quittances
+
+<a id="route-get-api-quittances"></a>
+### Lister les quittances
+
+- Methode : GET
+- Route : /api/quittances
+
+```bash
+curl -i http://localhost:8080/api/quittances
+```
+
+<a id="route-get-api-quittances-proprio-id"></a>
+### Lister les quittances d'un proprietaire
+
+- Methode : GET
+- Route : /api/quittances/{proprio_id}
+
+```bash
+curl -i http://localhost:8080/api/quittances/1
+```
+
+<a id="route-post-api-quittances"></a>
+### Creer une quittance
+
+- Methode : POST
+- Route : /api/quittances
+- Content-Type : application/json
+
+Schema des entrees (`POST /api/quittances`) - table `quittances` :
+
+| Nom             | Type Java | Nullable |
+|-----------------|-----------|----------|
+| proprio          | Object    | Oui      |
+| locataire          | Object    | Oui      |
+| propriete       | Object    | Oui      |
+| period          | String    | Oui      |
+| paymentDate     | String    | Oui      |
+| signatureCity   | String    | Oui      |
+| signatureImage  | String    | Oui      |
+
+Notes :
+- Le champ `id` est genere automatiquement.
+- L'objet `proprio` requiert au minimum son `id` (ex: `{"id": 1}`).
+- L'objet `locataire` requiert au minimum son `id` (ex: `{"id": 1}`).
+- L'objet `propriete` requiert au minimum son `id` (ex: `{"id": 1}`).
+
+Payload attendu :
+
+```json
+{
+        "proprio": {
+                "id": 1
+        },
+        "locataire": {
+                "id": 1
+        },
+        "propriete": {
+                "id": 1
+        },
+        "period": "février 2026",
+        "paymentDate": "01/02/2026",
+        "signatureCity": "Paris",
+        "signatureImage": "data:image/png;base64,iVBORw0K..."
+}
+```
+
+Exemple curl :
+
+```bash
+curl -i -X POST http://localhost:8080/api/quittances \
+        -H "Content-Type: application/json" \
+        -d '{
+        "proprio": {
+                "id": 1
+        },
+        "locataire": {
+                "id": 1
+        },
+        "propriete": {
+                "id": 1
+        },
+        "period": "février 2026",
+        "paymentDate": "01/02/2026",
+        "signatureCity": "Paris",
+        "signatureImage": "data:image/png;base64,iVBORw0K..."
+}'
+```
+
+<a id="route-delete-api-quittances-id"></a>
+### Supprimer une quittance
+
+- Methode : DELETE
+- Route : /api/quittances/{id}
+
+```bash
+curl -i -X DELETE http://localhost:8080/api/quittances/1
 ```
 
 ## Notes

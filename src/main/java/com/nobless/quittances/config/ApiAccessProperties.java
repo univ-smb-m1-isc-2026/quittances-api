@@ -10,8 +10,11 @@ import java.util.List;
 @ConfigurationProperties(prefix = "app.security")
 public class ApiAccessProperties {
 
-    private List<String> allowedOrigins = new ArrayList<>(List.of("http://localhost:5173"));
-    private boolean enforceOriginHeader = true;
+        private List<String> allowedOrigins = new ArrayList<>(List.of(
+            "http://localhost:5173",
+            "https://localhost:5173"
+        ));
+    private boolean enforceOriginHeader = false;
 
     public List<String> getAllowedOrigins() {
         return allowedOrigins;

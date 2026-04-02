@@ -44,7 +44,7 @@ public class FrontendOriginFilter extends OncePerRequestFilter {
         if (origin == null || origin.isBlank() || !allowedOrigins.contains(origin)) {
             response.setStatus(HttpStatus.FORBIDDEN.value());
             response.setContentType("application/json");
-            response.getWriter().write("{\"message\":\"Access denied: invalid origin\"}");
+            response.getWriter().write("{\"data\":null,\"state\":\"[ERROR] Access denied: invalid origin\"}");
             return;
         }
 
