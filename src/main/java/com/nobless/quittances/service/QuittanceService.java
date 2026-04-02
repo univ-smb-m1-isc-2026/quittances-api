@@ -22,8 +22,8 @@ public class QuittanceService {
         return quittanceRepository.findAll();
     }
 
-    public List<Quittance> listByLessorId(Long lessorId) {
-        return quittanceRepository.findByLessorId(lessorId);
+    public List<Quittance> listByProprioId(Long proprioId) {
+        return quittanceRepository.findByProprioId(proprioId);
     }
 
     public Quittance create(Quittance quittance) {

@@ -18,12 +18,12 @@ public class Quittance {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "lessor_id")
-    private Proprio lessor;
+    @JoinColumn(name = "proprio_id")
+    private Proprio proprio;
 
     @ManyToOne
-    @JoinColumn(name = "tenant_id")
-    private Locataire tenant;
+    @JoinColumn(name = "locataire_id")
+    private Locataire locataire;
 
     @ManyToOne
     @JoinColumn(name = "propriete_id")
@@ -50,20 +50,20 @@ public class Quittance {
         this.id = id;
     }
 
-    public Proprio getLessor() {
-        return lessor;
+    public Proprio getProprio() {
+        return proprio;
     }
 
-    public void setLessor(Proprio lessor) {
-        this.lessor = lessor;
+    public void setProprio(Proprio proprio) {
+        this.proprio = proprio;
     }
 
-    public Locataire getTenant() {
-        return tenant;
+    public Locataire getLocataire() {
+        return locataire;
     }
 
-    public void setTenant(Locataire tenant) {
-        this.tenant = tenant;
+    public void setLocataire(Locataire locataire) {
+        this.locataire = locataire;
     }
 
     public Propriete getPropriete() {

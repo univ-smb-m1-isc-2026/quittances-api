@@ -8,5 +8,5 @@ import java.util.List;
 
 @Repository
 public interface QuittanceRepository extends JpaRepository<Quittance, Long> {
-    List<Quittance> findByLessorId(Long lessorId);
+    List<Quittance> findByProprioId(Long proprioId);
 }

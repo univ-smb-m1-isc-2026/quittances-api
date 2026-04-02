@@ -38,11 +38,11 @@ public class QuittanceController {
         return ApiResponse.success(quittances);
     }
 
-    @GetMapping("/api/quittances/{lessor_id}")
-    public ApiResponse<List<Quittance>> listQuittancesByProprio(@PathVariable("lessor_id") Long lessorId) {
-        log.info("GET /api/quittances/{} - listing quittances by proprio", lessorId);
-        List<Quittance> quittances = quittanceService.listByLessorId(lessorId);
-        log.info("GET /api/quittances/{} - {} quittances returned", lessorId, quittances.size());
+    @GetMapping("/api/quittances/{proprio_id}")
+    public ApiResponse<List<Quittance>> listQuittancesByProprio(@PathVariable("proprio_id") Long proprioId) {
+        log.info("GET /api/quittances/{} - listing quittances by proprio", proprioId);
+        List<Quittance> quittances = quittanceService.listByProprioId(proprioId);
+        log.info("GET /api/quittances/{} - {} quittances returned", proprioId, quittances.size());
         if (quittances.isEmpty()) {
             return ApiResponse.info(quittances, "Aucune quittance en bdd");
         }
