@@ -27,7 +27,7 @@ public class Proprio {
     @Column(nullable = false, unique = true, length = 10)
     private String telephone;
 
-    @Column(nullable = false, unique = true, length = 60)
+    @Column(nullable = false, length = 60)
     private String password;
 
     public Proprio() {
