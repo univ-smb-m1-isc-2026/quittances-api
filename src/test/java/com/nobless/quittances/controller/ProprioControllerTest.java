@@ -3,6 +3,7 @@ package com.nobless.quittances.controller;
 import com.nobless.quittances.config.ApiAccessProperties;
 import com.nobless.quittances.model.Proprio;
 import com.nobless.quittances.security.JwtUtil;
+import com.nobless.quittances.service.AdminService;
 import com.nobless.quittances.service.ProprioService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,6 +35,9 @@ class ProprioControllerTest {
 
     @MockBean
     private ProprioService proprioService;
+
+    @MockBean
+    private AdminService adminService;
 
     @MockBean
     private JwtUtil jwtUtil;
