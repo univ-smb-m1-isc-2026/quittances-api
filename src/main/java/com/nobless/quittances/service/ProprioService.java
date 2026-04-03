@@ -36,18 +36,27 @@ public class ProprioService {
 
 
     public Proprio create(Proprio p) {
-        validateRequiredFields(p.getNom(), p.getPrenom(), p.getEmail(), p.getTelephone());
-
-        String normalizedEmail = p.getEmail().trim();
-        String normalizedTelephone = p.getTelephone().trim();
-
-        ensureEmailAvailable(normalizedEmail, null);
-        ensureTelephoneAvailable(normalizedTelephone, null);
-
-        p.setNom(p.getNom().trim());
-        p.setPrenom(p.getPrenom().trim());
-        p.setEmail(normalizedEmail);
-        p.setTelephone(normalizedTelephone);
+        if (p.getNom() != null) {
+            p.setNom(p.getNom().trim());
+        }
+        if (p.getPrenom() != null) {
+            p.setPrenom(p.getPrenom().trim());
+        }
+        if (p.getEmail() != null) {
+            String normalizedEmail = p.getEmail().trim();
+            if (!normalizedEmail.isEmpty()) {
+                ensureEmailAvailable(normalizedEmail, null);
+                p.setEmail(normalizedEmail);
+            }
+        }
+        if (p.getTelephone() != null) {
+            String normalizedTelephone = p.getTelephone().trim();
+            if (!normalizedTelephone.isEmpty()) {
+                validateTelephoneFormat(normalizedTelephone);
+                ensureTelephoneAvailable(normalizedTelephone, null);
+                p.setTelephone(normalizedTelephone);
+            }
+        }
 
         if (p.getPassword() != null && !p.getPassword().isBlank()) {
             p.setPassword(passwordEncoder.encode(p.getPassword()));
@@ -67,6 +76,10 @@ public class ProprioService {
 
     public List<Proprio> list() {
         return proprioRepository.findAll();
+    }
+
+    public void deleteById(Long id) {
+        deleteById(id, false);
     }
 
     @Transactional
@@ -129,23 +142,6 @@ public class ProprioService {
         }
 
         return proprioRepository.save(existing);
-    }
-
-    private void validateRequiredFields(String nom, String prenom, String email, String telephone) {
-        if (nom == null || nom.isBlank()) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "nom obligatoire");
-        }
-        if (prenom == null || prenom.isBlank()) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "prenom obligatoire");
-        }
-        if (email == null || email.isBlank()) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "email obligatoire");
-        }
-        if (telephone == null || telephone.isBlank()) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "telephone obligatoire");
-        }
-
-        validateTelephoneFormat(telephone.trim());
     }
 
     private void validateTelephoneFormat(String telephone) {
