@@ -57,6 +57,15 @@ curl -i http://localhost:8080/api/proprios \
 
 ## Routes disponibles
 
+Format de reponse API :
+
+```json
+{
+	"data": {},
+	"state": "[SUCCESS] ..."
+}
+```
+
 ### Acces sante
 
 | Methode | Route       | Description    |
@@ -79,6 +88,7 @@ curl -i http://localhost:8080/api/proprios \
 |---------|--------------------|---------------------------|
 | GET     | [/api/admins](#route-get-api-admins)      | Lister les admins  |
 | POST    | [/api/admins](#route-post-api-admins)      | Creer un admin     |
+| POST    | [/api/admins/login](#route-post-api-admins-login) | Connexion admin |
 | PUT     | [/api/admins/{id}](#route-put-api-admins-id) | Modifier un admin |
 | DELETE  | [/api/admins/{id}](#route-delete-api-admins-id) | Supprimer un admin |
 
@@ -246,9 +256,15 @@ Reponse en cas de succes :
 
 ```json
 {
-	"token": "<jwt>"
+	"data": {
+		"token": "<jwt>",
+		"admin": false
+	},
+	"state": "[SUCCESS] Connexion reussie"
 }
 ```
+
+Note : ce endpoint peut aussi authentifier un admin si l'email finit par `@root.com`.
 
 Exemple curl :
 
@@ -307,6 +323,48 @@ curl -i -X POST http://localhost:8080/api/admins \
 	-H "Content-Type: application/json" \
 	-d '{
 		"login": "admin",
+		"password": "secret123"
+	}'
+```
+
+<a id="route-post-api-admins-login"></a>
+### Connexion admin
+
+- Methode : POST
+- Route : /api/admins/login
+- Content-Type : application/json
+
+Regle login admin :
+- Le champ `email` doit respecter le pattern `^[a-zA-Z0-9]+@root.com$`.
+
+Payload attendu :
+
+```json
+{
+	"email": "admin1@root.com",
+	"password": "secret123"
+}
+```
+
+Reponse en cas de succes :
+
+```json
+{
+	"data": {
+		"token": "<jwt>",
+		"admin": true
+	},
+	"state": "[SUCCESS] Connexion reussie"
+}
+```
+
+Exemple curl :
+
+```bash
+curl -i -X POST http://localhost:8080/api/admins/login \
+	-H "Content-Type: application/json" \
+	-d '{
+		"email": "admin1@root.com",
 		"password": "secret123"
 	}'
 ```
