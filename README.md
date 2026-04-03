@@ -57,6 +57,15 @@ curl -i http://localhost:8080/api/proprios \
 
 ## Routes disponibles
 
+Format de reponse API :
+
+```json
+{
+	"data": {},
+	"state": "[SUCCESS] ..."
+}
+```
+
 ### Acces sante
 
 | Methode | Route       | Description    |
@@ -72,6 +81,16 @@ curl -i http://localhost:8080/api/proprios \
 | PUT     | [/api/proprios/{id}](#route-put-api-proprios-id) | Modifier un proprietaire |
 | POST    | [/api/proprios/login](#route-post-api-proprios-login) | Connexion proprietaire |
 | DELETE  | [/api/proprios/{id}](#route-delete-api-proprios-id) | Supprimer un proprietaire |
+
+### Acces table `admins`
+
+| Methode | Route              | Description               |
+|---------|--------------------|---------------------------|
+| GET     | [/api/admins](#route-get-api-admins)      | Lister les admins  |
+| POST    | [/api/admins](#route-post-api-admins)      | Creer un admin     |
+| POST    | [/api/admins/login](#route-post-api-admins-login) | Connexion admin |
+| PUT     | [/api/admins/{id}](#route-put-api-admins-id) | Modifier un admin |
+| DELETE  | [/api/admins/{id}](#route-delete-api-admins-id) | Supprimer un admin |
 
 ### Acces table `locataires`
 
@@ -237,9 +256,15 @@ Reponse en cas de succes :
 
 ```json
 {
-	"token": "<jwt>"
+	"data": {
+		"token": "<jwt>",
+		"admin": false
+	},
+	"state": "[SUCCESS] Connexion reussie"
 }
 ```
+
+Note : ce endpoint peut aussi authentifier un admin si l'email finit par `@root.com`.
 
 Exemple curl :
 
@@ -250,6 +275,135 @@ curl -i -X POST http://localhost:8080/api/proprios/login \
 		"email": "jean.dupont@example.com",
 		"password": "secret123"
 	}'
+```
+
+## Admins
+
+<a id="route-get-api-admins"></a>
+### Lister les admins
+
+- Methode : GET
+- Route : /api/admins
+
+```bash
+curl -i http://localhost:8080/api/admins
+```
+
+<a id="route-post-api-admins"></a>
+### Creer un admin
+
+- Methode : POST
+- Route : /api/admins
+- Content-Type : application/json
+
+Schema des entrees (`POST /api/admins`) - table `admins` :
+
+| Nom      | Type Java | Nullable | Unique |
+|----------|-----------|----------|--------|
+| login    | String    | Non      | Oui    |
+| password | String    | Non      | Non    |
+
+Notes :
+- Le champ `id` est genere automatiquement.
+- Le champ `password` est hache par le backend.
+
+Payload attendu :
+
+```json
+{
+	"login": "admin",
+	"password": "secret123"
+}
+```
+
+Exemple curl :
+
+```bash
+curl -i -X POST http://localhost:8080/api/admins \
+	-H "Content-Type: application/json" \
+	-d '{
+		"login": "admin",
+		"password": "secret123"
+	}'
+```
+
+<a id="route-post-api-admins-login"></a>
+### Connexion admin
+
+- Methode : POST
+- Route : /api/admins/login
+- Content-Type : application/json
+
+Regle login admin :
+- Le champ `email` doit respecter le pattern `^[a-zA-Z0-9]+@root.com$`.
+
+Payload attendu :
+
+```json
+{
+	"email": "admin1@root.com",
+	"password": "secret123"
+}
+```
+
+Reponse en cas de succes :
+
+```json
+{
+	"data": {
+		"token": "<jwt>",
+		"admin": true
+	},
+	"state": "[SUCCESS] Connexion reussie"
+}
+```
+
+Exemple curl :
+
+```bash
+curl -i -X POST http://localhost:8080/api/admins/login \
+	-H "Content-Type: application/json" \
+	-d '{
+		"email": "admin1@root.com",
+		"password": "secret123"
+	}'
+```
+
+<a id="route-put-api-admins-id"></a>
+### Modifier un admin
+
+- Methode : PUT
+- Route : /api/admins/{id}
+- Content-Type : application/json
+
+Payload partiel accepte (exemple) :
+
+```json
+{
+	"login": "admin2",
+	"password": "newSecret123"
+}
+```
+
+Exemple curl :
+
+```bash
+curl -i -X PUT http://localhost:8080/api/admins/1 \
+	-H "Content-Type: application/json" \
+	-d '{
+		"login": "admin2",
+		"password": "newSecret123"
+	}'
+```
+
+<a id="route-delete-api-admins-id"></a>
+### Supprimer un admin
+
+- Methode : DELETE
+- Route : /api/admins/{id}
+
+```bash
+curl -i -X DELETE http://localhost:8080/api/admins/1
 ```
 
 ## Locataires
