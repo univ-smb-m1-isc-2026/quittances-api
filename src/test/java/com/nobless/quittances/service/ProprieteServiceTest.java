@@ -46,6 +46,7 @@ class ProprieteServiceTest {
         p.setType("Studio");
         p.setIdProprio(1L);
         p.setIdLocataire(2L);
+        p.setPeriodicite(1);
 
         when(proprioRepository.existsById(1L)).thenReturn(true);
         when(locataireRepository.existsById(2L)).thenReturn(true);
@@ -79,6 +80,7 @@ class ProprieteServiceTest {
         p.setType("T2");
         p.setIdProprio(1L);
         p.setIdLocataire(2L);
+        p.setPeriodicite(1);
 
         when(proprioRepository.existsById(1L)).thenReturn(false);
 
@@ -122,6 +124,7 @@ class ProprieteServiceTest {
         payload.setType("duplex");
         payload.setIdProprio(1L);
         payload.setIdLocataire(2L);
+        payload.setPeriodicite(3);
 
         when(proprieteRepository.findById(10L)).thenReturn(Optional.of(existing));
         when(proprioRepository.existsById(1L)).thenReturn(true);
@@ -134,7 +137,24 @@ class ProprieteServiceTest {
         assertEquals("DUPLEX", result.getType());
         assertEquals(1L, result.getIdProprio());
         assertEquals(2L, result.getIdLocataire());
+        assertEquals(3, result.getPeriodicite());
         verify(proprieteRepository).save(existing);
+    }
+
+    @Test
+    void create_missingPeriodicite_throwsBadRequest() {
+        Propriete p = new Propriete();
+        p.setType("T2");
+        p.setIdProprio(1L);
+        p.setIdLocataire(2L);
+
+        when(proprioRepository.existsById(1L)).thenReturn(true);
+        when(locataireRepository.existsById(2L)).thenReturn(true);
+
+        ResponseStatusException ex = assertThrows(ResponseStatusException.class, () -> proprieteService.create(p));
+
+        assertEquals(HttpStatus.BAD_REQUEST, ex.getStatusCode());
+        assertTrue(ex.getReason().contains("periodicite"));
     }
 
     @Test

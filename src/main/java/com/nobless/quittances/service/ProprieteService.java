@@ -56,6 +56,9 @@ public class ProprieteService {
         if (propriete.getIdLocataire() == null || !locataireRepository.existsById(propriete.getIdLocataire())) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "idLocataire invalide: locataire introuvable");
         }
+        if (propriete.getPeriodicite() == null || propriete.getPeriodicite() <= 0) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "periodicite obligatoire et superieure a 0");
+        }
         return proprieteRepository.save(propriete);
     }
 
@@ -97,6 +100,9 @@ public class ProprieteService {
             existing.setDureeBail(payload.getDureeBail());
         }
         if (payload.getPeriodicite() != null) {
+            if (payload.getPeriodicite() <= 0) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "periodicite obligatoire et superieure a 0");
+            }
             existing.setPeriodicite(payload.getPeriodicite());
         }
         if (payload.getInfosComplementaires() != null) {

@@ -40,7 +40,8 @@ public class Quittance {
     @Column(name = "signature_image", columnDefinition = "TEXT")
     private String signatureImage;
 
-    // Getters and Setters
+    @Column(length = 30)
+    private String statut;
 
     public Long getId() {
         return id;
@@ -104,5 +105,13 @@ public class Quittance {
 
     public void setSignatureImage(String signatureImage) {
         this.signatureImage = signatureImage;
+    }
+
+    public String getStatut() {
+        return statut;
+    }
+
+    public void setStatut(String statut) {
+        this.statut = statut;
     }
 }

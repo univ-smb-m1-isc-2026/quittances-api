@@ -113,6 +113,7 @@ class ModelAndDtoCoverageTest {
         quittance.setPaymentDate("01/04/2026");
         quittance.setSignatureCity("Paris");
         quittance.setSignatureImage("base64data");
+        quittance.setStatut("ENVOYEE");
 
         assertEquals(99L, quittance.getId());
         assertEquals(proprio, quittance.getProprio());
@@ -122,6 +123,7 @@ class ModelAndDtoCoverageTest {
         assertEquals("01/04/2026", quittance.getPaymentDate());
         assertEquals("Paris", quittance.getSignatureCity());
         assertEquals("base64data", quittance.getSignatureImage());
+        assertEquals("ENVOYEE", quittance.getStatut());
     }
 
     @Test
