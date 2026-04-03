@@ -2,6 +2,7 @@ package com.nobless.quittances.controller;
 
 import com.nobless.quittances.controller.dto.ApiResponse;
 import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -18,6 +19,12 @@ public class GlobalExceptionHandler {
                 ? status.getReasonPhrase()
                 : exception.getReason();
         return ResponseEntity.status(status).body(ApiResponse.error(message));
+    }
+
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    public ResponseEntity<ApiResponse<Void>> handleDataIntegrity(DataIntegrityViolationException exception) {
+        return ResponseEntity.status(HttpStatus.CONFLICT)
+                .body(ApiResponse.error("Conflit de donnees"));
     }
 
     @ExceptionHandler(Exception.class)

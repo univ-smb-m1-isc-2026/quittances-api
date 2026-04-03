@@ -7,4 +7,5 @@ import java.util.List;
 
 public interface ProprieteRepository extends JpaRepository<Propriete, Long> {
 	List<Propriete> findByIdProprio(Long idProprio);
+	void deleteByIdProprio(Long idProprio);
 }

@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.nobless.quittances.controller.dto.LoginRequest;
@@ -73,10 +74,11 @@ public class ProprioController {
     }
 
     @DeleteMapping("/api/proprios/{id}")
-    public ApiResponse<Void> deleteProprio(@PathVariable Long id) {
-        log.info("DELETE /api/proprios/{} - delete proprio request", id);
-        proprioService.deleteById(id);
-        ApiResponse<Void> response = ApiResponse.success(null, "Proprio supprime");
+    public ApiResponse<Void> deleteProprio(@PathVariable Long id, @RequestParam(defaultValue = "false") boolean force) {
+        log.info("DELETE /api/proprios/{} - delete proprio request (force={})", id, force);
+        proprioService.deleteById(id, force);
+        String message = force ? "Proprio et proprietes supprimes" : "Proprio supprime";
+        ApiResponse<Void> response = ApiResponse.success(null, message);
         log.info("DELETE /api/proprios/{} - response state={}", id, response.getState());
         return response;
     }

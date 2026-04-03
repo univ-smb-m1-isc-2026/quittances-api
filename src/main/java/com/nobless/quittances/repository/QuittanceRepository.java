@@ -10,6 +10,8 @@ import java.util.Optional;
 @Repository
 public interface QuittanceRepository extends JpaRepository<Quittance, Long> {
     List<Quittance> findByProprioId(Long proprioId);
+    void deleteByProprioId(Long proprioId);
+    void deleteByPropriete_IdIn(List<Long> proprieteIds);
     boolean existsByProprieteIdAndPeriod(Long proprieteId, String period);
     Optional<Quittance> findByProprieteIdAndPeriod(Long proprieteId, String period);
 }
