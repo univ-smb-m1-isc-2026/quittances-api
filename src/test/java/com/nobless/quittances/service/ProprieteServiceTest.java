@@ -43,11 +43,13 @@ class ProprieteServiceTest {
     void create_validPropriete_returnsSavedPropriete() {
         // Arrange
         Propriete p = new Propriete();
+        p.setAdresse("10 rue des Lilas");
         p.setType("Studio");
         p.setIdProprio(1L);
         p.setIdLocataire(2L);
         p.setPeriodicite(1);
 
+        when(proprieteRepository.findByAdresse("10 rue des Lilas")).thenReturn(Optional.empty());
         when(proprioRepository.existsById(1L)).thenReturn(true);
         when(locataireRepository.existsById(2L)).thenReturn(true);
         when(proprieteRepository.save(any(Propriete.class))).thenReturn(p);
@@ -77,11 +79,13 @@ class ProprieteServiceTest {
     void create_proprioNotFound_throwsBadRequest() {
         // Arrange
         Propriete p = new Propriete();
+        p.setAdresse("11 rue des Lilas");
         p.setType("T2");
         p.setIdProprio(1L);
         p.setIdLocataire(2L);
         p.setPeriodicite(1);
 
+        when(proprieteRepository.findByAdresse("11 rue des Lilas")).thenReturn(Optional.empty());
         when(proprioRepository.existsById(1L)).thenReturn(false);
 
         // Act & Assert
@@ -117,6 +121,7 @@ class ProprieteServiceTest {
     void updateById_existingPropriete_updatesAndSaves() {
         Propriete existing = new Propriete();
         existing.setId(10L);
+        existing.setAdresse("10 rue de base");
         existing.setType("T2");
 
         Propriete payload = new Propriete();
@@ -127,6 +132,7 @@ class ProprieteServiceTest {
         payload.setPeriodicite(3);
 
         when(proprieteRepository.findById(10L)).thenReturn(Optional.of(existing));
+        when(proprieteRepository.findByAdresse("14 rue Victor Hugo")).thenReturn(Optional.empty());
         when(proprioRepository.existsById(1L)).thenReturn(true);
         when(locataireRepository.existsById(2L)).thenReturn(true);
         when(proprieteRepository.save(existing)).thenReturn(existing);
@@ -144,10 +150,12 @@ class ProprieteServiceTest {
     @Test
     void create_missingPeriodicite_throwsBadRequest() {
         Propriete p = new Propriete();
+        p.setAdresse("12 rue des Lilas");
         p.setType("T2");
         p.setIdProprio(1L);
         p.setIdLocataire(2L);
 
+        when(proprieteRepository.findByAdresse("12 rue des Lilas")).thenReturn(Optional.empty());
         when(proprioRepository.existsById(1L)).thenReturn(true);
         when(locataireRepository.existsById(2L)).thenReturn(true);
 
@@ -175,5 +183,27 @@ class ProprieteServiceTest {
 
         // Assert
         verify(proprieteRepository, times(1)).deleteById(1L);
+    }
+
+    @Test
+    void create_duplicateAdresse_throwsConflict() {
+        Propriete payload = new Propriete();
+        payload.setAdresse("49 Allee des Bouquetins");
+        payload.setType("T2");
+        payload.setIdProprio(1L);
+        payload.setIdLocataire(2L);
+        payload.setPeriodicite(1);
+
+        Propriete existing = new Propriete();
+        existing.setId(99L);
+        existing.setAdresse("49 Allee des Bouquetins");
+
+        when(proprieteRepository.findByAdresse("49 Allee des Bouquetins")).thenReturn(Optional.of(existing));
+
+        ResponseStatusException ex = assertThrows(ResponseStatusException.class, () -> proprieteService.create(payload));
+
+        assertEquals(HttpStatus.CONFLICT, ex.getStatusCode());
+        assertTrue(ex.getReason().contains("adresse deja utilisee"));
+        verify(proprieteRepository, never()).save(any(Propriete.class));
     }
 }

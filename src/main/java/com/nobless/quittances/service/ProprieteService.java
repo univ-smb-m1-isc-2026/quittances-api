@@ -10,6 +10,7 @@ import org.springframework.http.HttpStatus;
 
 import java.util.Set;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class ProprieteService {
@@ -41,6 +42,14 @@ public class ProprieteService {
     }
 
     public Propriete create(Propriete propriete) {
+        String normalizedAdresse = normalizeOptionalText(propriete.getAdresse());
+        if (normalizedAdresse != null) {
+            if (proprieteRepository.findByAdresse(normalizedAdresse).isPresent()) {
+                throw new ResponseStatusException(HttpStatus.CONFLICT, "adresse deja utilisee pour une autre propriete");
+            }
+            propriete.setAdresse(normalizedAdresse);
+        }
+
         String normalizedType = propriete.getType() == null ? null : propriete.getType().trim().toUpperCase();
         if (normalizedType == null || !ALLOWED_TYPES.contains(normalizedType)) {
             throw new ResponseStatusException(
@@ -79,7 +88,17 @@ public class ProprieteService {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "propriete introuvable"));
 
         if (payload.getAdresse() != null) {
-            existing.setAdresse(payload.getAdresse());
+            String normalizedAdresse = normalizeOptionalText(payload.getAdresse());
+            if (normalizedAdresse == null) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "adresse obligatoire");
+            }
+
+            Optional<Propriete> duplicate = proprieteRepository.findByAdresse(normalizedAdresse);
+            if (duplicate.isPresent() && !duplicate.get().getId().equals(existing.getId())) {
+                throw new ResponseStatusException(HttpStatus.CONFLICT, "adresse deja utilisee pour une autre propriete");
+            }
+
+            existing.setAdresse(normalizedAdresse);
         }
         if (payload.getVille() != null) {
             existing.setVille(payload.getVille());
@@ -138,5 +157,14 @@ public class ProprieteService {
         }
 
         return proprieteRepository.save(existing);
+    }
+
+    private String normalizeOptionalText(String value) {
+        if (value == null) {
+            return null;
+        }
+
+        String trimmed = value.trim();
+        return trimmed.isEmpty() ? null : trimmed;
     }
 }

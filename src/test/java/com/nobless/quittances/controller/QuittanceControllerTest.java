@@ -86,6 +86,21 @@ class QuittanceControllerTest {
     }
 
     @Test
+    void updateQuittance_withPayeeStatus_returnsSuccess() throws Exception {
+        Quittance quittance = new Quittance();
+        quittance.setId(43L);
+        quittance.setStatut("PAYEE");
+
+        when(quittanceService.updateById(eq(43L), any(Quittance.class))).thenReturn(quittance);
+
+        mockMvc.perform(put("/api/quittances/43")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"statut\":\"PAYEE\"}"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.state").value("[SUCCESS] Quittance modifiee"));
+    }  
+
+    @Test
     void deleteQuittance_returnsSuccess() throws Exception {
         doNothing().when(quittanceService).delete(42L);
 

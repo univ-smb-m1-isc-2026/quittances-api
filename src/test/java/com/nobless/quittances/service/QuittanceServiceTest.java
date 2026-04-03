@@ -192,4 +192,67 @@ class QuittanceServiceTest {
         assertEquals(HttpStatus.NOT_FOUND, ex.getStatusCode());
         assertTrue(ex.getReason().contains("quittance introuvable"));
     }
+
+    @Test
+    void updateById_withPayeeStatut_updatesToPayee() {
+        Quittance existing = new Quittance();
+        existing.setId(21L);
+        existing.setPeriod("avril 2026");
+        Propriete propriete = new Propriete();
+        propriete.setId(11L);
+        existing.setPropriete(propriete);
+        existing.setStatut("ENVOYEE");
+
+        Quittance payload = new Quittance();
+        payload.setStatut("PAYEE");
+
+        when(quittanceRepository.findById(21L)).thenReturn(Optional.of(existing));
+        when(quittanceRepository.findByProprieteIdAndPeriod(11L, "avril 2026")).thenReturn(Optional.empty());
+        when(quittanceRepository.save(existing)).thenReturn(existing);
+
+        Quittance result = quittanceService.updateById(21L, payload);
+
+        assertEquals("PAYEE", result.getStatut());
+        verify(quittanceRepository).save(existing);
+    }
+
+    @Test
+    void updateById_withPaidAlias_normalizesToPayee() {
+        Quittance existing = new Quittance();
+        existing.setId(22L);
+        existing.setPeriod("mai 2026");
+        Propriete propriete = new Propriete();
+        propriete.setId(12L);
+        existing.setPropriete(propriete);
+
+        Quittance payload = new Quittance();
+        payload.setStatut("paid");
+
+        when(quittanceRepository.findById(22L)).thenReturn(Optional.of(existing));
+        when(quittanceRepository.findByProprieteIdAndPeriod(12L, "mai 2026")).thenReturn(Optional.empty());
+        when(quittanceRepository.save(existing)).thenReturn(existing);
+
+        Quittance result = quittanceService.updateById(22L, payload);
+
+        assertEquals("PAYEE", result.getStatut());
+        verify(quittanceRepository).save(existing);
+    }
+
+    @Test
+    void updateById_withInvalidStatut_throwsBadRequest() {
+        Quittance existing = new Quittance();
+        existing.setId(23L);
+
+        Quittance payload = new Quittance();
+        payload.setStatut("UNKNOWN_STATUS");
+
+        when(quittanceRepository.findById(23L)).thenReturn(Optional.of(existing));
+
+        ResponseStatusException ex = assertThrows(ResponseStatusException.class,
+                () -> quittanceService.updateById(23L, payload));
+
+        assertEquals(HttpStatus.BAD_REQUEST, ex.getStatusCode());
+        assertTrue(ex.getReason().contains("statut invalide"));
+        verify(quittanceRepository, never()).save(any(Quittance.class));
+    }
 }

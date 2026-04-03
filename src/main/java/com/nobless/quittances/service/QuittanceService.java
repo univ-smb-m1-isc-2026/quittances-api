@@ -185,6 +185,7 @@ public class QuittanceService {
         return switch (normalized) {
             case "ENVOYEE", "ENVOYE", "SENT" -> "ENVOYEE";
             case "EN_ATTENTE", "ATTENTE", "PENDING" -> "EN_ATTENTE";
+            case "PAYEE", "PAYE", "PAID" -> "PAYEE";
             case "ECHEC", "FAILED", "FAIL" -> "ECHEC";
             default -> throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "statut invalide");
         };
