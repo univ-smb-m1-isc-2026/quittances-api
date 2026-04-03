@@ -2,6 +2,7 @@ package com.nobless.quittances.controller;
 
 import com.nobless.quittances.config.ApiAccessProperties;
 import com.nobless.quittances.model.Admin;
+import com.nobless.quittances.security.JwtUtil;
 import com.nobless.quittances.service.AdminService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,6 +34,9 @@ class AdminControllerTest {
 
     @MockBean
     private AdminService adminService;
+
+    @MockBean
+    private JwtUtil jwtUtil;
 
     @Test
     void listAdmins_returnsInfoWhenEmpty() throws Exception {
@@ -80,5 +84,45 @@ class AdminControllerTest {
         mockMvc.perform(delete("/api/admins/1"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.state").value("[SUCCESS] Admin supprime"));
+    }
+
+    @Test
+    void loginAdmin_returnsUnauthorizedWhenLoginPatternInvalid() throws Exception {
+        mockMvc.perform(post("/api/admins/login")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"email\":\"john@test.com\",\"password\":\"secret\"}"))
+                .andExpect(status().isUnauthorized())
+                .andExpect(jsonPath("$.state").value("[ERROR] Identifiants invalides"));
+    }
+
+    @Test
+    void loginAdmin_returnsUnauthorizedWhenAdminNotFound() throws Exception {
+        when(adminService.findByLogin("admin@root.com")).thenReturn(null);
+
+        mockMvc.perform(post("/api/admins/login")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"email\":\"admin@root.com\",\"password\":\"secret\"}"))
+                .andExpect(status().isUnauthorized())
+                .andExpect(jsonPath("$.state").value("[ERROR] Identifiants invalides"));
+    }
+
+    @Test
+    void loginAdmin_returnsTokenWhenCredentialsValid() throws Exception {
+        Admin admin = new Admin();
+        admin.setId(1L);
+        admin.setLogin("admin@root.com");
+        admin.setPassword("encoded");
+
+        when(adminService.findByLogin("admin@root.com")).thenReturn(admin);
+        when(adminService.passwordMatches("secret", "encoded")).thenReturn(true);
+        when(jwtUtil.generateAdminToken(admin)).thenReturn("admin-token");
+
+        mockMvc.perform(post("/api/admins/login")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"email\":\"admin@root.com\",\"password\":\"secret\"}"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.state").value("[SUCCESS] Connexion reussie"))
+                .andExpect(jsonPath("$.data.token").value("admin-token"))
+                .andExpect(jsonPath("$.data.admin").value(true));
     }
 }

@@ -24,6 +24,16 @@ public class AdminService {
         return adminRepository.findAll();
     }
 
+    public Admin findByLogin(String login) {
+        return adminRepository.findByLogin(login);
+    }
+
+    public boolean passwordMatches(String rawPassword, String encodedPassword) {
+        return rawPassword != null
+                && encodedPassword != null
+                && passwordEncoder.matches(rawPassword, encodedPassword);
+    }
+
     public Admin create(Admin admin) {
         if (admin.getPassword() != null && !admin.getPassword().isBlank()) {
             admin.setPassword(passwordEncoder.encode(admin.getPassword()));

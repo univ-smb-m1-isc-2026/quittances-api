@@ -1,6 +1,8 @@
 package com.nobless.quittances.controller;
 
+import com.nobless.quittances.model.Admin;
 import com.nobless.quittances.model.Proprio;
+import com.nobless.quittances.service.AdminService;
 import com.nobless.quittances.service.ProprioService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,10 +30,13 @@ public class ProprioController {
 
     private final ProprioService proprioService;
 
+    private final AdminService adminService;
+
     private final JwtUtil jwtUtil;
 
-    public ProprioController(ProprioService proprioService, JwtUtil jwtUtil) {
+    public ProprioController(ProprioService proprioService, AdminService adminService, JwtUtil jwtUtil) {
         this.proprioService = proprioService;
+        this.adminService = adminService;
         this.jwtUtil = jwtUtil;
     }
 
@@ -79,6 +84,20 @@ public class ProprioController {
     @PostMapping("/api/proprios/login")
     public ResponseEntity<ApiResponse<JwtResponse>> login(@RequestBody LoginRequest loginRequest) {
         log.info("Tentative de connexion pour email: '{}'", loginRequest.getEmail());
+
+        if (loginRequest.getEmail() != null && loginRequest.getEmail().toLowerCase().endsWith("@root.com")) {
+            Admin admin = adminService.findByLogin(loginRequest.getEmail());
+            if (admin == null || !adminService.passwordMatches(loginRequest.getPassword(), admin.getPassword())) {
+                log.warn("Echec de connexion admin pour login: '{}'", loginRequest.getEmail());
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                        .body(ApiResponse.error("Identifiants invalides"));
+            }
+
+            String adminJwt = jwtUtil.generateAdminToken(admin);
+            log.info("Connexion admin reussie pour login: '{}'", loginRequest.getEmail());
+            return ResponseEntity.ok(ApiResponse.success(new JwtResponse(adminJwt, true), "Connexion reussie"));
+        }
+
         Proprio proprio = proprioService.findByEmail(loginRequest.getEmail());
         log.info("Résultat findByEmail('{}') = {}", loginRequest.getEmail(), proprio);
         if (proprio == null) {
@@ -93,6 +112,6 @@ public class ProprioController {
         }
         String jwt = jwtUtil.generateToken(proprio);
         log.info("Connexion réussie pour email: '{}'", loginRequest.getEmail());
-        return ResponseEntity.ok(ApiResponse.success(new JwtResponse(jwt), "Connexion reussie"));
+        return ResponseEntity.ok(ApiResponse.success(new JwtResponse(jwt, false), "Connexion reussie"));
     }
 }

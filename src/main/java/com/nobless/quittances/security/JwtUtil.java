@@ -1,5 +1,6 @@
 package com.nobless.quittances.security;
 
+import com.nobless.quittances.model.Admin;
 import com.nobless.quittances.model.Proprio;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
@@ -23,6 +24,20 @@ public class JwtUtil {
                 .claim("id", proprio.getId())
                 .claim("nom", proprio.getNom())
                 .claim("prenom", proprio.getPrenom())
+                .claim("role", "PROPRIO")
+                .claim("admin", false)
+                .issuedAt(new Date())
+                .expiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
+                .signWith(getSigningKey())
+                .compact();
+    }
+
+    public String generateAdminToken(Admin admin) {
+        return Jwts.builder()
+                .subject(admin.getLogin())
+                .claim("id", admin.getId())
+                .claim("role", "ADMIN")
+                .claim("admin", true)
                 .issuedAt(new Date())
                 .expiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
                 .signWith(getSigningKey())

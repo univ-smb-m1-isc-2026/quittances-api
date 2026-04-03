@@ -1,7 +1,10 @@
 package com.nobless.quittances.controller;
 
 import com.nobless.quittances.controller.dto.ApiResponse;
+import com.nobless.quittances.controller.dto.JwtResponse;
+import com.nobless.quittances.controller.dto.LoginRequest;
 import com.nobless.quittances.model.Admin;
+import com.nobless.quittances.security.JwtUtil;
 import com.nobless.quittances.service.AdminService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,16 +19,40 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.regex.Pattern;
 
 @RestController
 public class AdminController {
 
     private static final Logger log = LoggerFactory.getLogger(AdminController.class);
+    private static final Pattern ADMIN_LOGIN_PATTERN = Pattern.compile("^[a-zA-Z0-9]+@root\\.com$");
 
     private final AdminService adminService;
+    private final JwtUtil jwtUtil;
 
-    public AdminController(AdminService adminService) {
+    public AdminController(AdminService adminService, JwtUtil jwtUtil) {
         this.adminService = adminService;
+        this.jwtUtil = jwtUtil;
+    }
+
+    @PostMapping("/api/admins/login")
+    public ResponseEntity<ApiResponse<JwtResponse>> loginAdmin(@RequestBody LoginRequest loginRequest) {
+        String login = loginRequest.getEmail();
+        log.info("POST /api/admins/login - tentative pour login={}", login);
+
+        if (login == null || !ADMIN_LOGIN_PATTERN.matcher(login).matches()) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(ApiResponse.error("Identifiants invalides"));
+        }
+
+        Admin admin = adminService.findByLogin(login);
+        if (admin == null || !adminService.passwordMatches(loginRequest.getPassword(), admin.getPassword())) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(ApiResponse.error("Identifiants invalides"));
+        }
+
+        String jwt = jwtUtil.generateAdminToken(admin);
+        return ResponseEntity.ok(ApiResponse.success(new JwtResponse(jwt, true), "Connexion reussie"));
     }
 
     @GetMapping("/api/admins")
